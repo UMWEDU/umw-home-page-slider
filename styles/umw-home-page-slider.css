@@ -1,0 +1,135 @@
+/**
+ * UMW Home Page Slideshow Styles
+ * @package UMW Home Page Slider
+ * @version 0.1a
+ */
+
+.flexslider {
+	border: none;
+	padding: 0;
+	margin: 0;
+}
+
+.flexslider li.slide {
+	list-style: none;
+	max-height: 330px;
+	overflow: hidden;
+	background: url(http://www.umw.edu/wp-content/plugins/slidedeck-lenses/umw-web/bg_slideshow_umw-home.jpg) repeat-y right top;
+	vertical-align: middle;
+}
+
+.flexslider li.slide img {
+	margin: 0;
+	padding: 0;
+	clear: left;
+	float: left;
+	max-width: 71.979166666666667%;
+	height: auto;
+}
+
+.flexslider .slide-caption {
+	margin: 0;
+	clear: right;
+	float: left;
+	max-width: 22.8125%;
+	padding: 2.604166666666667%;
+	vertical-align: middle;
+}
+
+.flexslider .slide-caption {
+	font-family: "MuseoSans300", Verdana, Arial, sans-serif;
+	font-size: 16px;
+	line-height: 18px;
+	font-size: 1rem;
+	line-height: 1.125rem;
+	font-weight: normal;
+}
+
+.flexslider .slide-caption h1 {
+	font-family: "MuseoSlab500", Georgia, "Times New Roman", Times, serif;
+	font-size: 36px;
+	line-height: 40px;
+	font-size: 2.25rem;
+	line-height: 2.5rem;
+	font-weight: normal;
+}
+
+.flexslider .slide-caption a, 
+.flexslider .slide-caption h1, 
+.flexslider .slide-caption {
+	color: #fff;
+	text-decoration: none;
+}
+
+ol.flex-control-nav {
+	bottom: 5%;
+	top: auto;
+	z-index: 10000;
+	max-width: 71.979166666666667%;
+	padding-right: 28.020833333333333%;
+}
+
+ol.flex-control-nav li a {
+	border: 1px solid #000;
+	background: rgba( 255, 255, 255, 0.5 );
+}
+
+ol.flex-control-nav li a:hover {
+	background: rgba( 255, 255, 255, 0.7 );
+}
+
+ol.flex-control-nav li a.flex-active {
+	background: rgba( 255, 255, 255, 0.9 );
+}
+
+body .flexslider .flex-next, 
+body .flexslider .flex-prev {
+	background-image: url( http://www.umw.edu/wp-content/plugins/slidedeck-lenses/umw-web/icon_arrow-large.png );
+	width: 41px;
+	height: 41px;
+	background-position: left center;
+}
+
+body .flexslider .flex-next {
+	background-position: -41px center;
+}
+
+.flexslider .flex-pauseplay {
+	position: absolute;
+	bottom: 5%;
+	left: auto;
+	top: auto;
+}
+
+body .flexslider:hover .flex-next, 
+.flexslider .flex-pauseplay {
+	right: 29.020833333333334%;
+}
+
+body .flexslider:hover .flex-prev {
+	left: 1%;
+}
+
+.flexslider .flex-pauseplay a {
+	display: block;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+	background: url( http://www.umw.edu/wp-content/plugins/easy-page-slideshow/images/slideshow_nav.png ) no-repeat;
+	width: 30px;
+	height: 30px;
+	text-indent: -9999em;
+	opacity: 0.6;
+}
+
+.flexslider:hover .flex-pauseplay a {
+	opacity: 1.0;
+}
+
+.flexslider .flex-pauseplay a.flex-pause {
+	background-position: -29px center;
+}
+
+.flexslider .flex-pauseplay a.flex-play {
+	background-position: -58px center;
+}
