@@ -76,6 +76,10 @@ class UMW_Home_Slider_Widget extends WP_Widget {
 		return $instance;
 	}
 	
+	function is_true( $v ) {
+		return in_array( $v, array( 'true', true, 1, '1' ), true );
+	}
+	
 	function widget( $args, $instance ) {
 		global $umw_home_page_slideshow_obj;
 		if ( class_exists( 'UMW_Home_Page_Slideshow' ) && ! isset( $umw_home_page_slideshow_obj ) )
