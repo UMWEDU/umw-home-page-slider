@@ -237,6 +237,8 @@ class UMW_Home_Page_Slideshow {
 			if ( ! empty( $slide->caption->text ) ) {
 				$rt .= $slide->caption->text;
 			}
+			$rt .= '
+			</section>';
 		}
 		$rt .= '
 		</article>
