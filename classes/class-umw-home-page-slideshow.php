@@ -3,17 +3,19 @@
  * Define the UMW_Home_Page_Slideshow class
  */
 class UMW_Home_Page_Slideshow {
-	var $source = 'http://feeds.feedburner.com/umw-greatminds-home/';
+	var $source = 'feeds.feedburner.com/umw-greatminds-home/';
 	var $feed = null;
 	var $slides = array();
 	var $show = null;
 	var $atts = array();
 	var $script_version = '0.1.26';
+	var $cache_duration = null;
 	
 	/**
 	 * Construct the UMW Home Page Slideshow object
 	 */
 	function __construct() {
+		$this->cache_duration = ( 30 * 60 );
 		$this->enqueue_scripts();
 	}
 	
@@ -78,7 +80,8 @@ class UMW_Home_Page_Slideshow {
 		
 		if ( 200 != $result['response']['code'] && 304 != $result['response']['code'] ) {
 			$this->feed = new WP_Error( 'feed-not-found', __( 'The requested feed returned a status code other than 200 or 304' ) );
-			error_log( '[UMW Home Page]: The RSS feed could not be found. The response was ' . $result['response']['code'] );
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG )
+				error_log( '[UMW Home Page]: The RSS feed could not be found. The response was ' . $result['response']['code'] );
 			return false;
 		}
 		
@@ -99,13 +102,14 @@ class UMW_Home_Page_Slideshow {
 		$this->feed->set_feed_url( $this->source );
 		$this->feed->set_cache_class( 'WP_Feed_Cache' );
 		$this->feed->set_file_class( 'WP_SimplePie_File' );
-		$this->feed->set_cache_duration( apply_filters( 'wp_feed_cache_transient_lifetime', ( 30 * 60 ), $this->source ) );
+		$this->feed->set_cache_duration( apply_filters( 'wp_feed_cache_transient_lifetime', $this->cache_duration, $this->source ) );
 		do_action_ref_array( 'wp_feed_options', array( &$this->feed, $this->source ) );
 		$this->feed->init();
 		$this->feed->handle_content_type();
 	
 		if ( $this->feed->error() ) {
-			error_log( '[UMW Home Page]: There was an error processing the RSS feed. The error message was: ' . $this->feed->error() );
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) 
+				error_log( '[UMW Home Page]: There was an error processing the RSS feed. The error message was: ' . $this->feed->error() );
 			return $this->feed = new WP_Error( 'simplepie-error', $this->feed->error() );
 		}
 		
@@ -116,22 +120,34 @@ class UMW_Home_Page_Slideshow {
 	 * Process the requested feed items and turn them into slides
 	 */
 	function process_feed() {
-		error_log( '[UMW Home Page]: Entered the process_feed() method' );
+		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) 
+			error_log( '[UMW Home Page]: Entered the process_feed() method' );
 		$this->fetch_feed();
 		if ( is_wp_error( $this->feed ) )
-			return;
+			return/* wp_die( 'There was an error processing the feed: ' . $this->feed->get_error_message() )*/;
 		
-		error_log( '[UMW Home Page]: Made it past error-checking for the feed' );
+		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) 
+			error_log( '[UMW Home Page]: Made it past error-checking for the feed' );
 		foreach( $this->feed->get_items( 0, 10 ) as $item ) {
-			$tmpimg = $item->get_enclosure();
-			if ( empty( $tmpimg ) || ! is_object( $tmpimg ) )
+			$enclosures = $item->get_item_tags( '', 'enclosure' );
+			$src = null;
+			foreach ( $enclosures as $enc ) {
+				if ( array_key_exists( 'attribs', $enc ) ) {
+					$attribs = array_shift( $enc['attribs'] );
+					if ( array_key_exists( 'type', $attribs ) && stristr( $attribs['type'], 'image' ) )
+						$src = $attribs['url'];
+				}
+			}
+			
+			if ( empty( $src ) )
 				continue;
 			
-			$img = array( 'src' => $tmpimg->get_link(), 'alt' => null );
+			$img = array( 'src' => $src, 'alt' => null );
 			$caption = array( 'title' => $item->get_title(), 'text' => $item->get_description() );
 			$link = array( 'url' => $item->get_permalink() );
 			
-			error_log( '[UMW Home Page]: Preparing to create a new UMW_Home_Slide object for a specific slide' );
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) 
+				error_log( '[UMW Home Page]: Preparing to create a new UMW_Home_Slide object for a specific slide' );
 			$this->slides[] = new UMW_Home_Slide( $img, $caption, $link );
 		}
 	}
@@ -144,7 +160,8 @@ class UMW_Home_Page_Slideshow {
 	 * Output the content of the slider
 	 */
 	function get_slider( $atts = array() ) {
-		error_log( '[UMW Home Page]: Entered the get_slider() method' );
+		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) 
+			error_log( '[UMW Home Page]: Entered the get_slider() method' );
 		
 		$this->atts = $this->get_defaults( $atts );
 		$defaults = $this->_defaults();
@@ -164,7 +181,8 @@ class UMW_Home_Page_Slideshow {
 		if ( false !== ( $this->show = get_transient( 'umw-home-page-slider', false ) ) )
 			return $this->show;
 		
-		error_log( '[UMW Home Page]: Not using an existing cache for the slider' );
+		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) 
+			error_log( '[UMW Home Page]: Not using an existing cache for the slider' );
 		$this->process_feed();
 		
 		if ( empty( $this->slides ) && false !== ( $this->show = get_option( 'umw-home-page-slider-cache', true ) ) )
@@ -198,7 +216,7 @@ class UMW_Home_Page_Slideshow {
 	</div>';
 			
 			$this->show = $rt;
-			set_transient( 'umw-home-page-slider', $rt, ( 60 * 30 ) );
+			set_transient( 'umw-home-page-slider', $rt, $this->cache_duration );
 			update_option( 'umw-home-page-slider-cache', $rt );
 			
 			return $rt;
@@ -208,7 +226,8 @@ class UMW_Home_Page_Slideshow {
 	 * Output the slider
 	 */
 	function slider( $atts = array() ) {
-		error_log( '[UMW Home Page]: Entered the slider() method' );
+		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) 
+			error_log( '[UMW Home Page]: Entered the slider() method' );
 		echo $this->get_slider( $atts );
 	}
 	
