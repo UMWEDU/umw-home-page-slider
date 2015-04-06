@@ -51,5 +51,9 @@ Most of those attributes are available as options when setting up the widget. Ho
 
 == Changelog ==
 
+= 1.0 =
+* Update version of FlexSlider from v2 to v2.4.0
+* Modify styles to more closely match new UMW design
+
 = 0.1a =
 * Initial version
