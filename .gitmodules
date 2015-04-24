@@ -1,0 +1,3 @@
+[submodule "scripts/jquery.flexslider"]
+	path = scripts/jquery.flexslider
+	url = git@github.com:woothemes/FlexSlider.git
