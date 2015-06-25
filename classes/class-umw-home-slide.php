@@ -6,9 +6,10 @@ class UMW_Home_Slide {
 	var $img = null;
 	var $caption = null;
 	var $link = null;
+	var $thumb = null;
 	
 	function __construct( $img=array(), $caption=array(), $link=array() ) {
-		$this->img = (object) array( 'src' => null, 'alt' => null );
+		$this->img = (object) array( 'src' => null, 'alt' => null, 'thumb' => null );
 		$this->caption = (object) array( 'title' => null, 'text' => null );
 		$this->link = (object) array( 'url' => null );
 		

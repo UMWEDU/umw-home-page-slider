@@ -128,21 +128,56 @@ class UMW_Home_Page_Slideshow {
 		
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) 
 			error_log( '[UMW Home Page]: Made it past error-checking for the feed' );
+			
 		foreach( $this->feed->get_items( 0, 10 ) as $item ) {
+			/* Grab all of the enclosures for this item, regardless of type */
 			$enclosures = $item->get_item_tags( '', 'enclosure' );
-			$src = null;
+			/* Reset our $encs, $src and $thumb vars */
+			$src = $thumb = array( 'url' => null, 'length' => 0 );
+			$encs = array();
+			/* Loop through all enclosures & grab only those that are images */
 			foreach ( $enclosures as $enc ) {
 				if ( array_key_exists( 'attribs', $enc ) ) {
 					$attribs = array_shift( $enc['attribs'] );
 					if ( array_key_exists( 'type', $attribs ) && stristr( $attribs['type'], 'image' ) )
-						$src = $attribs['url'];
+						$encs[] = $attribs;
+				}
+			}
+			/* If we found image enclosures, process them */
+			/* Eventually, we should get to the point where we check to see if the data-thumbid property matches between the two */
+			if ( ! empty( $encs ) ) {
+				foreach ( $encs as $enc ) {
+					if ( is_array( $enc ) && array_key_exists( 'length', $attribs ) ) {
+						/* Store the largest image as our source image */
+						if ( $attribs['length'] > $src['length'] ) {
+							$src['url'] = esc_url( $attribs['url'] );
+							$src['length'] = $attribs['length'];
+						}
+						/* Store the smallest image as our thumb image */
+						if ( empty( $thumb ) || $attribs['length'] < $thumb['length'] ) {
+							$thumb['url'] = esc_url( $attribs['url'] );
+							$thumb['length'] = $attribs['length'];
+						}
+					}
 				}
 			}
 			
+			if ( ! empty( $src['url'] ) ) {
+				$src = $src['url'];
+			} else {
+				$src = null;
+			}
+			if ( ! empty( $thumb['url'] ) ) {
+				$thumb = $thumb['url'];
+			} else {
+				$thumb = null;
+			}
+			
+			/* If we didn't find a source image, bail out */
 			if ( empty( $src ) )
 				continue;
 			
-			$img = array( 'src' => $src, 'alt' => null );
+			$img = array( 'src' => $src, 'alt' => null, 'thumb' => $thumb );
 			$caption = array( 'title' => $item->get_title(), 'text' => $item->get_description() );
 			$link = array( 'url' => $item->get_permalink() );
 			
@@ -234,9 +269,16 @@ class UMW_Home_Page_Slideshow {
 	function slide( $slide ) {
 		if ( ! is_object( $slide ) )
 			return error_log( '[UMW Home Page]: For some reason, the slide in the slide() method was not an object' );
-		$rt = '
+		
+		if ( ! empty( $slide->img->thumb ) ) {
+			$rt = '
+	<li class="slide" data-thumb="' . $slide->img->thumb . '">
+		<article class="slide-content">';
+		} else {
+			$rt = '
 	<li class="slide">
 		<article class="slide-content">';
+		}
 		if ( ! empty( $slide->link->url ) )
 			$rt .= '<a href="' . esc_url( $slide->link->url ) . '">';
 			
