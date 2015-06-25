@@ -202,6 +202,9 @@ class UMW_Home_Page_Slideshow {
 		$defaults = $this->_defaults();
 		foreach ( $defaults as $k => $v ) {
 			if ( true === $v || false === $v ) {
+				if ( 'controlNav' == $k && 'thumbnails' == $this->atts[$k] ) {
+					continue;
+				}
 				$this->atts[$k] = in_array( $this->atts[$k], array( 'true', true, 1, '1' ), true );
 			}
 		}
