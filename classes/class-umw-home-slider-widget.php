@@ -41,7 +41,7 @@ class UMW_Home_Slider_Widget extends WP_Widget {
 	<label for="<?php echo $this->get_field_id( 'animationLoop' ) ?>"><?php _e( 'Loop the slideshow to start over from beginning after last slide?' ) ?></label></p>
 <p><input type="checkbox" name="<?php echo $this->get_field_name( 'video' ) ?>" id="<?php echo $this->get_field_id( 'video' ) ?>" value="1"<?php checked( $instance['video'] ) ?>/> 
 	<label for="<?php echo $this->get_field_id( 'video' ) ?>"><?php _e( 'Will there be video included in the slideshow?' ) ?></label></p>
-<p><input type="checkbox" name="<?php echo $this->get_field_name( 'controlNav' ) ?>" id="<?php echo $this->get_field_id( 'controlNav' ) ?>" value="1"<?php checked( $instance['controlNav'] ) ?>/> 
+<p><input type="checkbox" name="<?php echo $this->get_field_name( 'controlNav' ) ?>" id="<?php echo $this->get_field_id( 'controlNav' ) ?>" value="1"<?php checked( $instance['controlNav'] ) ?><?php checked( $instance['controlNav'], 'thumbnails' ) ?>/> 
 	<label for="<?php echo $this->get_field_id( 'controlNav' ) ?>"><?php _e( 'Show a navigation indicator for each slide in the slideshow?' ) ?></label></p>
 <p><input type="checkbox" name="<?php echo $this->get_field_name( 'controlNavThumbs' ) ?>" id="<?php echo $this->get_field_id( 'controlNavThumbs' ) ?>" value="1"<?php checked( $instance['controlNav'], 'thumbnails' ) ?>/>
 	<label for="<?php echo $this->get_field_id( 'controlNavThumbs' ) ?>"><?php _e( 'Use image thumbnails as the navigation indicator for each slide?' ) ?></label></p>
