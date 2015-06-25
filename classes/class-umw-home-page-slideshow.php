@@ -212,7 +212,8 @@ class UMW_Home_Page_Slideshow {
 		$this->source = esc_url( $this->atts['feed'] );
 		unset( $this->atts['feed'] );
 		
-		wp_enqueue_style( 'umw-slider' );
+		/*wp_enqueue_style( 'umw-slider' );*/
+		wp_enqueue_style( 'flexStyles' );
 		wp_enqueue_script( 'umw-slider' );
 		/*wp_localize_script( 'umw-slider', 'umw_slider_atts', $this->atts );*/
 		add_action( 'wp_footer', array( $this, 'script_atts' ), 1 );
