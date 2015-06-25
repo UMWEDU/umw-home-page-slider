@@ -43,6 +43,8 @@ class UMW_Home_Slider_Widget extends WP_Widget {
 	<label for="<?php echo $this->get_field_id( 'video' ) ?>"><?php _e( 'Will there be video included in the slideshow?' ) ?></label></p>
 <p><input type="checkbox" name="<?php echo $this->get_field_name( 'controlNav' ) ?>" id="<?php echo $this->get_field_id( 'controlNav' ) ?>" value="1"<?php checked( $instance['controlNav'] ) ?>/> 
 	<label for="<?php echo $this->get_field_id( 'controlNav' ) ?>"><?php _e( 'Show a navigation indicator for each slide in the slideshow?' ) ?></label></p>
+<p><input type="checkbox" name="<?php echo $this->get_field_name( 'controlNavThumbs' ) ?>" id="<?php echo $this->get_field_id( 'controlNavThumbs' ) ?>" value="1"<?php checked( $instance['controlNav'], 'thumbnails' ) ?>/>
+	<label for="<?php echo $this->get_field_id( 'controlNavThumbs' ) ?>"><?php _e( 'Use image thumbnails as the navigation indicator for each slide?' ) ?></label></p>
 <p><input type="checkbox" name="<?php echo $this->get_field_name( 'directionNav' ) ?>" id="<?php echo $this->get_field_id( 'directionNav' ) ?>" value="1"<?php checked( $instance['directionNav'] ) ?>/> 
 	<label for="<?php echo $this->get_field_id( 'directionNav' ) ?>"><?php _e( 'Show previous/next buttons?' ) ?></label></p>
 <p><input type="checkbox" name="<?php echo $this->get_field_name( 'keyboard' ) ?>" id="<?php echo $this->get_field_id( 'keyboard' ) ?>" value="1"<?php checked( $instance['keyboard'] ) ?>/> 
@@ -72,6 +74,9 @@ class UMW_Home_Slider_Widget extends WP_Widget {
 				else
 					$instance[$k] = null;
 			}
+		}
+		if ( array_key_exists( 'controlNavThumbs', $new_instance ) && array_key_exists( 'controlNav', $new_instance ) ) {
+			$instance['controlNav'] = 'thumbnails';
 		}
 		return $instance;
 	}
