@@ -39,6 +39,7 @@ class UMW_Home_Page_Slideshow {
 			'directionNav' => true, 
 			'keyboard' => true, 
 			'mousewheel' => false, 
+			'useCSS' => true, 
 		) );
 	}
 	
