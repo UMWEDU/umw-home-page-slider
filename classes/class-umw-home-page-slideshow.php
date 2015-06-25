@@ -132,6 +132,7 @@ class UMW_Home_Page_Slideshow {
 		foreach( $this->feed->get_items( 0, 10 ) as $item ) {
 			/* Grab all of the enclosures for this item, regardless of type */
 			$enclosures = $item->get_item_tags( '', 'enclosure' );
+			
 			/* Reset our $encs, $src and $thumb vars */
 			$src = $thumb = array( 'url' => null, 'length' => 0 );
 			$encs = array();
@@ -147,16 +148,16 @@ class UMW_Home_Page_Slideshow {
 			/* Eventually, we should get to the point where we check to see if the data-thumbid property matches between the two */
 			if ( ! empty( $encs ) ) {
 				foreach ( $encs as $enc ) {
-					if ( is_array( $enc ) && array_key_exists( 'length', $attribs ) ) {
+					if ( is_array( $enc ) && array_key_exists( 'length', $enc ) ) {
 						/* Store the largest image as our source image */
-						if ( $attribs['length'] > $src['length'] ) {
-							$src['url'] = esc_url( $attribs['url'] );
-							$src['length'] = $attribs['length'];
+						if ( $enc['length'] > $src['length'] ) {
+							$src['url'] = esc_url( $enc['url'] );
+							$src['length'] = $enc['length'];
 						}
 						/* Store the smallest image as our thumb image */
-						if ( empty( $thumb ) || $attribs['length'] < $thumb['length'] ) {
-							$thumb['url'] = esc_url( $attribs['url'] );
-							$thumb['length'] = $attribs['length'];
+						if ( empty( $thumb['url'] ) || $enc['length'] < $thumb['length'] ) {
+							$thumb['url'] = esc_url( $enc['url'] );
+							$thumb['length'] = $enc['length'];
 						}
 					}
 				}
