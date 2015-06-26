@@ -8,7 +8,7 @@ class UMW_Home_Page_Slideshow {
 	var $slides = array();
 	var $show = null;
 	var $atts = array();
-	var $script_version = '0.1.27';
+	var $script_version = '0.1.28';
 	var $cache_duration = null;
 	
 	/**
@@ -240,14 +240,14 @@ class UMW_Home_Page_Slideshow {
 			$shows['thumbs'][] = $this->slide( $slide, true );
 		}
 		$rt = '
-	<div class="uhp-slider flexslider">
+	<div id="uhp-slider" class="uhp-slider flexslider">
 		<ul class="slides">';
 		$rt .= implode( '', $shows['main'] );
 		$rt .= '
 		</ul>
 	</div>';
 		$rt .= '
-	<div class="uhp-slider-nav flexslider">
+	<div id="uhp-slider-nav" class="uhp-slider-nav flexslider">
 		<ul class="slides">';
 		$rt .= implode( '', $shows['thumbs'] );
 		$rt .= '
