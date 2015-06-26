@@ -235,23 +235,28 @@ class UMW_Home_Page_Slideshow {
 		}
 		
 		$shows = array( 'main' => array(), 'thumbs' => array() );
+		$i = 0;
 		foreach ( $this->slides as $slide ) {
-			$shows['main'][] = $this->slide( $slide );
-			$shows['thumbs'][] = $this->slide( $slide, true );
+			$shows['main'][$i] = $this->slide( $slide );
+			$shows['thumbs'][$i] = $this->slide( $slide, true );
+			
+			$i++;
 		}
 		$rt = '
-	<div id="uhp-slider" class="uhp-slider flexslider">
-		<ul class="slides">';
+	<div class="uhp-slider-wrap">
+		<div id="uhp-slider" class="uhp-slider flexslider">
+			<ul class="slides">';
 		$rt .= implode( '', $shows['main'] );
 		$rt .= '
-		</ul>
-	</div>';
+			</ul>
+		</div>';
 		$rt .= '
-	<div id="uhp-slider-nav" class="uhp-slider-nav flexslider">
-		<ul class="slides">';
+		<div id="uhp-slider-nav" class="uhp-slider-nav flexslider">
+			<ul class="slides">';
 		$rt .= implode( '', $shows['thumbs'] );
 		$rt .= '
-		</ul>
+			</ul>
+		</div>
 	</div>';
 		
 		$this->show = $rt;
