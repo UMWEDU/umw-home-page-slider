@@ -23,5 +23,19 @@ jQuery( function() {
 				}
 			} );
 		};
-	jQuery( '.flexslider' ).flexslider( umw_slider_atts );
+	umw_slider_atts.sync = 'uhp-slider-nav';
+	umw_slider_atts.controlNav = false; 
+	
+	jQuery( '.uhp-slider-nav' ).flexslider( {
+		'animation' : 'slide', 
+		'controlNav' : false, 
+		'animationLoop' : true, 
+		'slideshow' : false, 
+		'itemWidth' : 35, 
+		'minItems' : 5, 
+		'maxItems' : 5, 
+		'itemMargin' : 5,
+		'asNavFor' : 'uhp-slider'
+	} );
+	jQuery( '.uhp-slider' ).flexslider( umw_slider_atts );
 } );

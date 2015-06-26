@@ -224,43 +224,41 @@ class UMW_Home_Page_Slideshow {
 		
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) 
 			error_log( '[UMW Home Page]: Not using an existing cache for the slider' );
+			
 		$this->process_feed();
 		
 		if ( empty( $this->slides ) && false !== ( $this->show = get_option( 'umw-home-page-slider-cache', true ) ) )
 			return $this->show;
 		
-		$rt = '
-	<div class="flexslider">
-		<ul class="slides">';
 		if ( empty( $this->slides ) ) {
-			$rt .= '
-			<li class="slide">
-				<article class="slide-content">
-					<section class="slide-caption">
-						<h1>' . __( 'No Content Found' ) . '</h1>
-						<p>' . __( 'Unfortunately, no content for this slideshow could be found. Please check back later.' ) . '</p>
-					</section>
-				</article>
-			</li>';
-			$rt .= '
-		</ul>
-	</div>';
-			
-			return $rt;
+			return '';
 		}
 		
-		foreach( $this->slides as $slide )
-			$rt .= $this->slide( $slide );
-		
-			$rt .= '
+		$shows = array( 'main' => array(), 'thumbs' => array() );
+		foreach ( $this->slides as $slide ) {
+			$shows['main'][] = $this->slide( $slide );
+			$shows['thumbs'][] = $this->slide( $slide, true );
+		}
+		$rt = '
+	<div class="uhp-slider flexslider">
+		<ul class="slides">';
+		$rt .= implode( '', $shows['main'] );
+		$rt .= '
 		</ul>
 	</div>';
-			
-			$this->show = $rt;
-			set_transient( 'umw-home-page-slider', $rt, $this->cache_duration );
-			update_option( 'umw-home-page-slider-cache', $rt );
-			
-			return $rt;
+		$rt .= '
+	<div class="uhp-slider-nav flexslider">
+		<ul class="slides">';
+		$rt .= implode( '', $shows['thumbs'] );
+		$rt .= '
+		</ul>
+	</div>';
+		
+		$this->show = $rt;
+		set_transient( 'umw-home-page-slider', $rt, $this->cache_duration );
+		update_option( 'umw-home-page-slider-cache', $rt );
+		
+		return $rt;
 	}
 	
 	/**
@@ -272,19 +270,18 @@ class UMW_Home_Page_Slideshow {
 		echo $this->get_slider( $atts );
 	}
 	
-	function slide( $slide ) {
+	function slide( $slide, $thumb=false ) {
 		if ( ! is_object( $slide ) )
 			return error_log( '[UMW Home Page]: For some reason, the slide in the slide() method was not an object' );
 		
-		if ( ! empty( $slide->img->thumb ) ) {
-			$rt = '
-	<li class="slide" data-thumb="' . $slide->img->thumb . '">
-		<article class="slide-content">';
-		} else {
-			$rt = '
+		if ( $thumb && ! empty( $slide->img->thumb ) ) {
+			return sprintf( '<li class="slide"><img src="%1$s" alt="View the %2$s slide"/></li>', $slide->img->thumb, $slide->caption->title );
+		}
+		
+		$rt = '
 	<li class="slide">
 		<article class="slide-content">';
-		}
+		
 		if ( ! empty( $slide->link->url ) )
 			$rt .= '<a href="' . esc_url( $slide->link->url ) . '">';
 			
