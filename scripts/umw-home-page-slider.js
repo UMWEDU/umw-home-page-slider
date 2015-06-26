@@ -1,7 +1,7 @@
 /**
  * UMW Home Page Slideshow Scripts
  * @package UMW Home Page Slider
- * @version 0.1.28
+ * @version 0.1.29
  */
 
 jQuery( function() {
@@ -26,7 +26,7 @@ jQuery( function() {
 	umw_slider_atts.sync = '.uhp-slider-nav';
 	umw_slider_atts.controlNav = false; 
 	
-	jQuery( '.uhp-slider-nav' ).flexslider( {
+	var umw_control_nav_atts = {
 		'animation' : 'slide', 
 		'controlNav' : false, 
 		'animationLoop' : true, 
@@ -36,6 +36,10 @@ jQuery( function() {
 		'maxItems' : 5, 
 		'itemMargin' : 5,
 		'asNavFor' : '.uhp-slider'
-	} );
+	};
+	
+	umw_control_nav_atts.randomize = umw_slider_atts.randomize;
+	
+	jQuery( '.uhp-slider-nav' ).flexslider( umw_control_nav_atts );
 	jQuery( '.uhp-slider' ).flexslider( umw_slider_atts );
 } );
