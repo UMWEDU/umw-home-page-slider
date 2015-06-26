@@ -1,7 +1,7 @@
 /**
  * UMW Home Page Slideshow Scripts
  * @package UMW Home Page Slider
- * @version 0.1.29
+ * @version 0.1.31
  */
 
 jQuery( function() {
@@ -32,8 +32,6 @@ jQuery( function() {
 		'animationLoop' : true, 
 		'slideshow' : false, 
 		'itemWidth' : 35, 
-		'minItems' : 5, 
-		'maxItems' : 5, 
 		'itemMargin' : 5,
 		'asNavFor' : '.uhp-slider'
 	};
