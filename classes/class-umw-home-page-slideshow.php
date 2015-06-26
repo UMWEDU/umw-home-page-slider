@@ -8,7 +8,7 @@ class UMW_Home_Page_Slideshow {
 	var $slides = array();
 	var $show = null;
 	var $atts = array();
-	var $script_version = '0.1.26';
+	var $script_version = '0.1.27';
 	var $cache_duration = null;
 	
 	/**
