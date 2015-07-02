@@ -130,7 +130,7 @@ class UMW_Home_Page_Slideshow {
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) 
 			error_log( '[UMW Home Page]: Made it past error-checking for the feed' );
 			
-		foreach( $this->feed->get_items( 0, 10 ) as $item ) {
+		foreach( $this->feed->get_items( 0, 5 ) as $item ) {
 			/* Grab all of the enclosures for this item, regardless of type */
 			$enclosures = $item->get_item_tags( '', 'enclosure' );
 			
