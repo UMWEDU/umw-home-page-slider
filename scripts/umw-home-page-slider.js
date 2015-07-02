@@ -1,7 +1,7 @@
 /**
  * UMW Home Page Slideshow Scripts
  * @package UMW Home Page Slider
- * @version 0.1.31
+ * @version 0.1.32
  */
 
 jQuery( function() {
