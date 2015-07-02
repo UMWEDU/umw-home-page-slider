@@ -197,6 +197,8 @@ class UMW_Home_Page_Slideshow {
 	 * Output the content of the slider
 	 */
 	function get_slider( $atts = array() ) {
+		return $this->get_slider_with_thumb_nav( $atts );
+		
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) 
 			error_log( '[UMW Home Page]: Entered the get_slider() method' );
 		
@@ -287,6 +289,127 @@ class UMW_Home_Page_Slideshow {
 	<li class="slide">
 		<article class="slide-content">';
 		
+		if ( ! empty( $slide->link->url ) )
+			$rt .= '<a href="' . esc_url( $slide->link->url ) . '">';
+			
+		$rt .= '
+			<img src="' . $slide->img->src . '" alt="' . $slide->img->alt . '" />';
+		
+		if ( ! empty( $slide->link->url ) )
+			$rt .= '</a>';
+		
+		if ( ! empty( $slide->caption->title ) || ! empty( $slide->caption->text ) ) {
+			$rt .= '
+			<section class="slide-caption">';
+			if ( ! empty( $slide->caption->title ) ) {
+				$rt .= '
+				<h1>' . ( empty( $slide->link->url ) ? '' : '<a href="' . esc_url( $slide->link->url ) . '">' ) . apply_filters( 'the_title', $slide->caption->title ) . ( empty( $slide->link->url ) ? '' : '</a>' ) . '</h1>';
+			}
+			if ( ! empty( $slide->caption->text ) ) {
+				$rt .= $slide->caption->text;
+			}
+			$rt .= '
+			</section>';
+		}
+		$rt .= '
+		</article>
+	</li>';
+		
+		return $rt;
+	}
+	
+	/**
+	 * Output the content of the slider
+	 */
+	function get_slider_with_thumb_nav( $atts = array() ) {
+		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) 
+			error_log( '[UMW Home Page]: Entered the get_slider() method' );
+		
+		$this->atts = $this->get_defaults( $atts );
+		$defaults = $this->_defaults();
+		foreach ( $defaults as $k => $v ) {
+			if ( true === $v || false === $v ) {
+				if ( 'controlNav' == $k && 'thumbnails' == $this->atts[$k] ) {
+					continue;
+				}
+				$this->atts[$k] = in_array( $this->atts[$k], array( 'true', true, 1, '1' ), true );
+			}
+		}
+		$this->source = esc_url( $this->atts['feed'] );
+		unset( $this->atts['feed'] );
+		
+		/*wp_enqueue_style( 'umw-slider' );*/
+		wp_enqueue_style( 'flexStyles' );
+		wp_enqueue_script( 'umw-slider' );
+		/*wp_localize_script( 'umw-slider', 'umw_slider_atts', $this->atts );*/
+		add_action( 'wp_footer', array( $this, 'script_atts' ), 1 );
+		
+		if ( false !== ( $this->show = get_transient( 'umw-home-page-slider', false ) ) )
+			return $this->show;
+		
+		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) 
+			error_log( '[UMW Home Page]: Not using an existing cache for the slider' );
+		$this->process_feed();
+		
+		if ( empty( $this->slides ) && false !== ( $this->show = get_option( 'umw-home-page-slider-cache', true ) ) )
+			return $this->show;
+		
+		$rt = '
+	<div class="flexslider">
+		<ul class="slides">';
+		if ( empty( $this->slides ) ) {
+			$rt .= '
+			<li class="slide">
+				<article class="slide-content">
+					<section class="slide-caption">
+						<h1>' . __( 'No Content Found' ) . '</h1>
+						<p>' . __( 'Unfortunately, no content for this slideshow could be found. Please check back later.' ) . '</p>
+					</section>
+				</article>
+			</li>';
+			$rt .= '
+		</ul>
+	</div>';
+			
+			return $rt;
+		}
+		
+		foreach( $this->slides as $slide )
+			$rt .= $this->slide_with_thumb_nav( $slide );
+		
+			$rt .= '
+		</ul>
+	</div>';
+			
+			$this->show = $rt;
+			set_transient( 'umw-home-page-slider', $rt, $this->cache_duration );
+			update_option( 'umw-home-page-slider-cache', $rt );
+			
+			return $rt;
+	}
+	
+	/**
+	 * Output the slider
+	 */
+	function slider_with_thumb_nav( $atts = array() ) {
+		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) 
+			error_log( '[UMW Home Page]: Entered the slider() method' );
+		echo $this->get_slider_with_thumb_nav( $atts );
+	}
+	
+	function slide_with_thumb_nav( $slide ) {
+		if ( ! is_object( $slide ) )
+			return error_log( '[UMW Home Page]: For some reason, the slide in the slide() method was not an object' );
+		
+		if ( ! empty( $slide->img->thumb ) ) {
+			$rt = '
+	<li class="slide" data-thumb="' . $slide->img->thumb . '">
+		<article class="slide-content">';
+		} else {
+			$rt = '
+	<li class="slide">
+		<article class="slide-content">';
+		}
 		if ( ! empty( $slide->link->url ) )
 			$rt .= '<a href="' . esc_url( $slide->link->url ) . '">';
 			

@@ -23,7 +23,8 @@ jQuery( function() {
 				}
 			} );
 		};
-	umw_slider_atts.sync = '.uhp-slider-nav';
+		jQuery( '.flexslider' ).flexslider( umw_slider_atts );
+	/*umw_slider_atts.sync = '.uhp-slider-nav';
 	umw_slider_atts.controlNav = false; 
 	
 	var umw_control_nav_atts = {
@@ -39,5 +40,5 @@ jQuery( function() {
 	umw_control_nav_atts.randomize = umw_slider_atts.randomize;
 	
 	jQuery( '.uhp-slider-nav' ).flexslider( umw_control_nav_atts );
-	jQuery( '.uhp-slider' ).flexslider( umw_slider_atts );
+	jQuery( '.uhp-slider' ).flexslider( umw_slider_atts );*/
 } );
