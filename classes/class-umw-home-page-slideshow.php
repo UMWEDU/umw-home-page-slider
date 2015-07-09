@@ -428,7 +428,7 @@ class UMW_Home_Page_Slideshow {
 				<h1>' . ( empty( $slide->link->url ) ? '' : '<a href="' . esc_url( $slide->link->url ) . '">' ) . apply_filters( 'the_title', $slide->caption->title ) . ( empty( $slide->link->url ) ? '' : '</a>' ) . '</h1>';
 			}
 			if ( ! empty( $slide->caption->text ) ) {
-				$rt .= $slide->caption->text;
+				$rt .= '<div class="slide-caption-text">' . $slide->caption->text . '</div>';
 			}
 			$rt .= '
 			</section>';
