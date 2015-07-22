@@ -221,6 +221,9 @@ class UMW_Home_Page_Slideshow {
 		/*wp_localize_script( 'umw-slider', 'umw_slider_atts', $this->atts );*/
 		add_action( 'wp_footer', array( $this, 'script_atts' ), 1 );
 		
+		if ( isset( $_GET['delete_transients'] ) )
+			delete_transient( 'umw-home-page-slider' );
+		
 		if ( false !== ( $this->show = get_transient( 'umw-home-page-slider', false ) ) )
 			return $this->show;
 		
@@ -344,6 +347,9 @@ class UMW_Home_Page_Slideshow {
 		wp_enqueue_script( 'umw-slider' );
 		/*wp_localize_script( 'umw-slider', 'umw_slider_atts', $this->atts );*/
 		add_action( 'wp_footer', array( $this, 'script_atts' ), 1 );
+		
+		if ( isset( $_GET['delete_transients'] ) )
+			delete_transient( 'umw-home-page-slider' );
 		
 		if ( false !== ( $this->show = get_transient( 'umw-home-page-slider', false ) ) )
 			return $this->show;
