@@ -404,7 +404,7 @@ class UMW_Home_Page_Slideshow {
 		
 		if ( ! empty( $slide->img->thumb ) ) {
 			$rt = '
-	<li class="slide" data-thumb="' . $slide->img->thumb . '">
+	<li class="slide" data-thumb="' . $slide->img->thumb . '" data-thumb-alt="' . sprintf( __( 'Advance to the %s slide' ), apply_filters( 'the_title_attribute', $slide->caption->title ) ) . '">
 		<article class="slide-content">';
 		} else {
 			$rt = '
