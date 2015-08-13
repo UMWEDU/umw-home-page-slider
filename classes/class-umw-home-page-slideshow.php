@@ -15,7 +15,7 @@ class UMW_Home_Page_Slideshow {
 	 * Construct the UMW Home Page Slideshow object
 	 */
 	function __construct() {
-		$this->cache_duration = ( 30 * 60 );
+		$this->cache_duration = HOUR_IN_SECONDS;
 		$this->enqueue_scripts();
 	}
 	
