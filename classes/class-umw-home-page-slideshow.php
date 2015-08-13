@@ -388,6 +388,7 @@ class UMW_Home_Page_Slideshow {
 		</ul>
 	</div>';
 			
+			$rt = str_replace( 'greatminds/files', 'greatminds/wp-content/uploads/sites/20', $rt );
 			$this->show = $rt;
 			set_transient( 'umw-home-page-slider', $rt, $this->cache_duration );
 			update_option( 'umw-home-page-slider-cache', $rt );
