@@ -411,7 +411,7 @@ class UMW_Home_Page_Slideshow {
 		
 		if ( ! empty( $slide->img->thumb ) ) {
 			$rt = '
-	<li class="slide" data-thumb="' . $slide->img->thumb . '" data-thumb-alt="' . sprintf( __( 'Advance to the %s slide' ), apply_filters( 'the_title_attribute', $slide->caption->title ) ) . '">
+	<li class="slide" data-thumb="' . str_replace( array( 'https://', 'http://' ), array( '//', '//' ), $slide->img->thumb ) . '" data-thumb-alt="' . sprintf( __( 'Advance to the %s slide' ), apply_filters( 'the_title_attribute', $slide->caption->title ) ) . '">
 		<article class="slide-content">';
 		} else {
 			$rt = '
@@ -422,7 +422,7 @@ class UMW_Home_Page_Slideshow {
 			$rt .= '<a href="' . esc_url( $slide->link->url ) . '">';
 			
 		$rt .= '
-			<img src="' . $slide->img->src . '" alt="' . $slide->img->alt . '" />';
+			<img src="' . str_replace( array( 'https://', 'http://' ), array( '//', '//' ), $slide->img->src ) . '" alt="' . $slide->img->alt . '" />';
 		
 		if ( ! empty( $slide->link->url ) )
 			$rt .= '</a>';
