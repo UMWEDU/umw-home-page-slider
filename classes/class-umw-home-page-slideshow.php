@@ -306,7 +306,7 @@ class UMW_Home_Page_Slideshow {
 			<section class="slide-caption">';
 			if ( ! empty( $slide->caption->title ) ) {
 				$rt .= '
-				<h1>' . ( empty( $slide->link->url ) ? '' : '<a href="' . esc_url( $slide->link->url ) . '">' ) . apply_filters( 'the_title', $slide->caption->title ) . ( empty( $slide->link->url ) ? '' : '</a>' ) . '</h1>';
+				<h2 class="slide-caption-title">' . ( empty( $slide->link->url ) ? '' : '<a href="' . esc_url( $slide->link->url ) . '">' ) . apply_filters( 'the_title', $slide->caption->title ) . ( empty( $slide->link->url ) ? '' : '</a>' ) . '</h2>';
 			}
 			if ( ! empty( $slide->caption->text ) ) {
 				$rt .= '
@@ -369,7 +369,7 @@ class UMW_Home_Page_Slideshow {
 			<li class="slide">
 				<article class="slide-content">
 					<section class="slide-caption">
-						<h1>' . __( 'No Content Found' ) . '</h1>
+						<h2 class="slide-caption-title">' . __( 'No Content Found' ) . '</h2>
 						<p>' . __( 'Unfortunately, no content for this slideshow could be found. Please check back later.' ) . '</p>
 					</section>
 				</article>
@@ -432,7 +432,7 @@ class UMW_Home_Page_Slideshow {
 			<section class="slide-caption">';
 			if ( ! empty( $slide->caption->title ) ) {
 				$rt .= '
-				<h1>' . ( empty( $slide->link->url ) ? '' : '<a href="' . esc_url( $slide->link->url ) . '">' ) . apply_filters( 'the_title', $slide->caption->title ) . ( empty( $slide->link->url ) ? '' : '</a>' ) . '</h1>';
+				<h2 class="slide-caption-title">' . ( empty( $slide->link->url ) ? '' : '<a href="' . esc_url( $slide->link->url ) . '">' ) . apply_filters( 'the_title', $slide->caption->title ) . ( empty( $slide->link->url ) ? '' : '</a>' ) . '</h2>';
 			}
 			if ( ! empty( $slide->caption->text ) ) {
 				$rt .= '<div class="slide-caption-text">' . $slide->caption->text . '</div>';
