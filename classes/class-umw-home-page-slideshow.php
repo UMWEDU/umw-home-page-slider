@@ -10,6 +10,7 @@ class UMW_Home_Page_Slideshow {
 	var $atts = array();
 	var $script_version = '0.1.32';
 	var $cache_duration = null;
+	var $feed_type = 'xml';
 	
 	/**
 	 * Construct the UMW Home Page Slideshow object
@@ -67,23 +68,25 @@ class UMW_Home_Page_Slideshow {
 	 * Check to make sure we can retrieve the requested feed
 	 */
 	function test_feed() {
-		if ( ! class_exists( 'WP_HTTP' ) )
-			include_once( ABSPATH . WPINC. '/class-http.php' );
+		$head = wp_safe_remote_head( esc_url( $this->source ) );
 		
-		$request = new WP_HTTP;
-		$result = $request->request( esc_url( $this->source ) );
-		unset( $request );
-		
-		if ( is_wp_error( $result ) ) {
+		if ( is_wp_error( $head ) ) {
 			$this->feed = new WP_Error( 'feed-not-found', $result->get_error_message() );
 			return false;
 		}
 		
-		if ( 200 != $result['response']['code'] && 304 != $result['response']['code'] ) {
+		if ( 200 !== wp_remote_retrieve_response_code( $head ) && 304 !== wp_remote_retrieve_response_code( $head ) ) {
 			$this->feed = new WP_Error( 'feed-not-found', __( 'The requested feed returned a status code other than 200 or 304' ) );
 			if ( defined( 'WP_DEBUG' ) && WP_DEBUG )
 				error_log( '[UMW Home Page]: The RSS feed could not be found. The response was ' . $result['response']['code'] );
 			return false;
+		}
+		
+		$headers = wp_remote_retrieve_headers( $head );
+		$type = $headers['content-type'];
+		
+		if ( stristr( $type, 'application/json' ) ) {
+			$this->feed_type = 'json';
 		}
 		
 		return true;
@@ -95,6 +98,10 @@ class UMW_Home_Page_Slideshow {
 	function fetch_feed() {
 		if ( ! $this->test_feed() )
 			return new WP_Error( 'feed-not-found', __( 'The requested feed could not be retrieved' ) );
+		
+		if ( 'json' == $this->feed_type ) {
+			return $this->fetch_json_feed();
+		}
 		
 		if ( ! class_exists( 'SimplePie' ) )
 			require_once( ABSPATH . WPINC . '/class-feed.php' );
@@ -117,6 +124,20 @@ class UMW_Home_Page_Slideshow {
 		return $this->feed;
 	}
 	
+	function fetch_json_feed() {
+		$this->feed = get_transient( 'umw-home-page-feed-' . base64_encode( $this->source ) );
+		if ( ! empty( $this->feed ) ) {
+			return $this->feed;
+		}
+		
+		$response = wp_safe_remote_get( $this->source );
+		$this->feed = json_decode( wp_remote_retrieve_body( $response ) );
+		
+		set_transient( 'umw-home-page-feed-' . base64_encode( $this->source ), $this->feed, apply_filters( 'wp_feed_cache_transient_lifetime', $this->cache_duration, $this->source ) );
+		
+		return $this->feed;
+	}
+	
 	/**
 	 * Process the requested feed items and turn them into slides
 	 */
@@ -124,6 +145,11 @@ class UMW_Home_Page_Slideshow {
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) 
 			error_log( '[UMW Home Page]: Entered the process_feed() method' );
 		$this->fetch_feed();
+		
+		if ( 'json' == $this->feed_type ) {
+			return $this->process_json_feed();
+		}
+		
 		if ( is_wp_error( $this->feed ) )
 			return/* wp_die( 'There was an error processing the feed: ' . $this->feed->get_error_message() )*/;
 		
@@ -186,6 +212,36 @@ class UMW_Home_Page_Slideshow {
 			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) 
 				error_log( '[UMW Home Page]: Preparing to create a new UMW_Home_Slide object for a specific slide' );
 			$this->slides[] = new UMW_Home_Slide( $img, $caption, $link );
+		}
+	}
+	
+	function process_json_feed() {
+		$feed = array_slice( $this->feed, 0, 5 );
+		foreach( $feed as $item ) {
+			if ( empty( $item->featured_media ) ) {
+				continue;
+			}
+			
+			$media = json_decode( wp_remote_retrieve_body( wp_safe_remote_get( $item->_links->{'wp:featuredmedia'}[0]->href ) ) );
+			$image = array( 'src' => null, 'thumb' => null, 'alt' => null );
+			if ( property_exists( $media->media_details->sizes, 'page-feature' ) ) {
+				$image['src'] = $media->media_details->sizes->{'page-feature'}->source_url;
+			} else {
+				$image['src'] = $media->source_url;
+			}
+			
+			if ( property_exists( $media->media_details->sizes, '50px-thumb' ) ) {
+				$image['thumb'] = $media->media_details->sizes->{'50px-thumb'}->source_url;
+			}
+			
+			$image['alt'] = $media->alt_text;
+			
+			$caption = array( 'title' => $item->title->rendered, 'text' => $item->excerpt->rendered );
+			$link = array( 'url' => esc_url( $item->link ) );
+			
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) 
+				error_log( '[UMW Home Page]: Preparing to create a new UMW_Home_Slide object for a specific slide' );
+			$this->slides[] = new UMW_Home_Slide( $image, $caption, $link );
 		}
 	}
 	
