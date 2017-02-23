@@ -20,6 +20,8 @@ class UMW_Home_Slider_Widget extends WP_Widget {
     	<option value="slide"<?php selected( $instance['animation'], 'slide' ) ?>><?php _e( 'Slide' ) ?></option>
         <option value="fade"<?php selected( $instance['animation'], 'fade' ) ?>><?php _e( 'Fade' ) ?></option>
     </select></p>
+<p><label for="<?php echo $this->get_field_id( 'maxslides' ) ?>"><?php _e( 'How many slides should be included in the slide show?' ) ?></label>
+    <input type="number" min="1" max="50" class="widefat" name="<?php echo $this->get_field_name( 'maxslides' ) ?>" id="<?php echo $this->get_field_id( 'maxslides' ) ?>" value="<?php echo intval( $instance['maxslides'] ) ?>" /></p>
 <p><label for="<?php echo $this->get_field_id( 'slideshowSpeed' ) ?>"><?php _e( 'Show each slide for how many seconds?' ) ?></label> 
 	<input type="number" name="<?php echo $this->get_field_name( 'slideshowSpeed' ) ?>" id="<?php echo $this->get_field_id( 'slideshowSpeed' ) ?>" value="<?php echo ( intval( $instance['slideshowSpeed'] ) / 1000 ) ?>"/></p>
 <p><label for="<?php echo $this->get_field_id( 'animationSpeed' ) ?>"><?php _e( 'How many seconds should the slide/fade animation last?' ) ?></label> 
@@ -66,6 +68,8 @@ class UMW_Home_Slider_Widget extends WP_Widget {
 				$instance[$k] = $new_instance[$k];
 				if ( false === $v || true === $v )
 					$instance[$k] = true;
+				elseif ( is_numeric( $v ) && 'maxslides' == $k )
+                    $instance[$k] = absint( $new_instance[$k] );
 				elseif ( is_numeric( $v ) )
 					$instance[$k] = $new_instance[$k] * 1000;
 			} else {
@@ -78,6 +82,9 @@ class UMW_Home_Slider_Widget extends WP_Widget {
 		if ( array_key_exists( 'controlNavThumbs', $new_instance ) && array_key_exists( 'controlNav', $new_instance ) ) {
 			$instance['controlNav'] = 'thumbnails';
 		}
+		
+		delete_transient( 'umw-home-page-slider' );
+		
 		return $instance;
 	}
 	
