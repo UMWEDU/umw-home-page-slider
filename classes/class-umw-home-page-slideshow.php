@@ -343,77 +343,6 @@ class UMW_Home_Page_Slideshow {
 	 */
 	function get_slider( $atts = array() ) {
 		return $this->get_slider_with_thumb_nav( $atts );
-		
-		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) 
-			error_log( '[UMW Home Page]: Entered the get_slider() method' );
-		
-		$this->atts = $this->get_defaults( $atts );
-		$defaults = $this->_defaults();
-		foreach ( $defaults as $k => $v ) {
-			if ( true === $v || false === $v ) {
-				if ( 'controlNav' == $k && 'thumbnails' == $this->atts[$k] ) {
-					continue;
-				}
-				$this->atts[$k] = in_array( $this->atts[$k], array( 'true', true, 1, '1' ), true );
-			}
-		}
-		$this->source = esc_url( $this->atts['feed'] );
-		unset( $this->atts['feed'] );
-		
-		/*wp_enqueue_style( 'umw-slider' );*/
-		wp_enqueue_style( 'flexStyles' );
-		wp_enqueue_script( 'umw-slider' );
-		/*wp_localize_script( 'umw-slider', 'umw_slider_atts', $this->atts );*/
-		add_action( 'wp_footer', array( $this, 'script_atts' ), 1 );
-		
-		if ( isset( $_GET['delete_transients'] ) )
-			delete_transient( 'umw-home-page-slider' );
-		
-		if ( false !== ( $this->show = get_transient( 'umw-home-page-slider' ) ) )
-			return $this->show;
-		
-		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) 
-			error_log( '[UMW Home Page]: Not using an existing cache for the slider' );
-			
-		$this->process_feed();
-		
-		if ( empty( $this->slides ) && false !== ( $this->show = get_option( 'umw-home-page-slider-cache', true ) ) )
-			return $this->show;
-		
-		if ( empty( $this->slides ) ) {
-			return '';
-		}
-		
-		$shows = array( 'main' => array(), 'thumbs' => array() );
-		$i = 0;
-		foreach ( $this->slides as $slide ) {
-			$shows['main'][$i] = $this->slide( $slide );
-			$shows['thumbs'][$i] = $this->slide( $slide, true );
-			
-			$i++;
-		}
-		$rt = '
-	<div class="uhp-slider-wrap">
-		<div id="uhp-slider" class="uhp-slider flexslider">
-			<ul class="slides">';
-		$rt .= implode( '', $shows['main'] );
-		$rt .= '
-			</ul>
-		</div>';
-		$rt .= '
-		<div id="uhp-slider-nav" class="uhp-slider-nav flexslider">
-			<ul class="slides">';
-		$rt .= implode( '', $shows['thumbs'] );
-		$rt .= '
-			</ul>
-		</div>
-	</div>';
-		
-		$this->show = $rt;
-		set_transient( 'umw-home-page-slider', $rt, $this->cache_duration );
-		update_option( 'umw-home-page-slider-cache', $rt );
-		
-		return $rt;
 	}
 	
 	/**
@@ -428,7 +357,7 @@ class UMW_Home_Page_Slideshow {
 	function slider( $atts = array() ) {
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) 
 			error_log( '[UMW Home Page]: Entered the slider() method' );
-		echo $this->get_slider( $atts );
+		echo $this->get_slider_with_thumb_nav( $atts );
 	}
 	
 	/**
