@@ -3,17 +3,44 @@
  * Define the UMW_Home_Page_Slideshow class
  */
 class UMW_Home_Page_Slideshow {
+	/**
+	 * @var string the URL to the feed that should be retrieved and processed
+	 */
 	var $source = 'feeds.feedburner.com/umw-greatminds-home/';
+	/**
+	 * @var null|SimplePie|stdClass[] the actual content of the feed itself
+	 */
 	var $feed = null;
+	/**
+	 * @var array|UMW_Home_Slide[] the array of slide objects after processing
+	 */
 	var $slides = array();
+	/**
+	 * @var null|string the processed HTML of the slideshow itself
+	 */
 	var $show = null;
+	/**
+	 * @var array the array of attributes to be applied to the slideshow
+	 */
 	var $atts = array();
+	/**
+	 * @var string the version number to append to any script/style files
+	 */
 	var $script_version = '0.1.32';
+	/**
+	 * @var int|null the length of time for which the transients should be valid
+	 */
 	var $cache_duration = null;
+	/**
+	 * @var string specifies whether the feed is in XML/RSS format or JSON format
+	 */
 	var $feed_type = 'xml';
 	
 	/**
 	 * Construct the UMW Home Page Slideshow object
+	 *
+	 * @access  public
+	 * @since   0.1
 	 */
 	function __construct() {
 		$this->cache_duration = HOUR_IN_SECONDS;
@@ -22,30 +49,41 @@ class UMW_Home_Page_Slideshow {
 	
 	/**
 	 * Retrieve an array of the default values for the slider
+	 *
+	 * @access  private
+	 * @since   0.1
+	 * @return  array the array of default attributes for the slider
 	 */
 	private function _defaults() {
 		return apply_filters( 'umw-slider-defaults', array(
-			'feed' => esc_url( $this->source ), 
-			'animation' => 'slide', 
-			'slideshowSpeed' => 7000, 
-			'animationSpeed' => 1500, 
-			'direction' => 'horizontal', 
-			'slideshow' => true, 
-			'randomize' => true, 
-			'pausePlay' => true, 
-			'pauseOnAction' => false, 
-			'animationLoop' => true, 
-			'video' => false, 
-			'controlNav' => true, 
-			'directionNav' => true, 
-			'keyboard' => true, 
-			'mousewheel' => false, 
-			'useCSS' => true, 
+			'feed'           => esc_url( $this->source ),
+			'animation'      => 'slide',
+			'slideshowSpeed' => 7000,
+			'animationSpeed' => 1500,
+			'direction'      => 'horizontal',
+			'slideshow'      => true,
+			'randomize'      => true,
+			'pausePlay'      => true,
+			'pauseOnAction'  => false,
+			'animationLoop'  => true,
+			'video'          => false,
+			'controlNav'     => true,
+			'directionNav'   => true,
+			'keyboard'       => true,
+			'mousewheel'     => false,
+			'useCSS'         => true,
+			'maxslides'      => 5,
 		) );
 	}
 	
 	/**
 	 * Return the current settings
+	 *
+	 * @param   array $atts the array of attributes that should override the default arguments
+	 *
+	 * @access  public
+	 * @since   0.1
+	 * @return  array the filled array of attributes for the shortcode
 	 */
 	function get_defaults( $atts=array() ) {
 		return shortcode_atts( $this->_defaults(), $atts );
@@ -53,6 +91,10 @@ class UMW_Home_Page_Slideshow {
 	
 	/**
 	 * Register the scripts and styles used in this plugin
+	 *
+	 * @access  public
+	 * @since   0.1
+	 * @return  void
 	 */
 	function enqueue_scripts() {
 		if ( ! wp_script_is( 'flexslider', 'registered' ) )
@@ -66,19 +108,23 @@ class UMW_Home_Page_Slideshow {
 	
 	/**
 	 * Check to make sure we can retrieve the requested feed
+	 *
+	 * @access  public
+	 * @since   0.1
+	 * @return  bool whether the feed provided success headers or not
 	 */
 	function test_feed() {
 		$head = wp_safe_remote_head( esc_url( $this->source ) );
 		
 		if ( is_wp_error( $head ) ) {
-			$this->feed = new WP_Error( 'feed-not-found', $result->get_error_message() );
+			$this->feed = new WP_Error( 'feed-not-found', $head->get_error_message() );
 			return false;
 		}
 		
 		if ( 200 !== wp_remote_retrieve_response_code( $head ) && 304 !== wp_remote_retrieve_response_code( $head ) ) {
 			$this->feed = new WP_Error( 'feed-not-found', __( 'The requested feed returned a status code other than 200 or 304' ) );
 			if ( defined( 'WP_DEBUG' ) && WP_DEBUG )
-				error_log( '[UMW Home Page]: The RSS feed could not be found. The response was ' . $result['response']['code'] );
+				error_log( '[UMW Home Page]: The RSS feed could not be found. The response was ' . wp_remote_retrieve_response_code( $head ) );
 			return false;
 		}
 		
@@ -94,6 +140,10 @@ class UMW_Home_Page_Slideshow {
 	
 	/**
 	 * Retrieve the appropriate items from the requested feed
+	 *
+	 * @access  public
+	 * @since   0.1
+	 * @return  SimplePie|WP_Error|stdClass an object containing information about the feed (or the feed items themselves)
 	 */
 	function fetch_feed() {
 		if ( ! $this->test_feed() )
@@ -124,6 +174,13 @@ class UMW_Home_Page_Slideshow {
 		return $this->feed;
 	}
 	
+	/**
+	 * Retrieve a REST API JSON feed and its items
+	 *
+	 * @access  public
+	 * @since   0.1
+	 * @return  stdClass the decoded JSON of feed items as a PHP object
+	 */
 	function fetch_json_feed() {
 		$this->feed = get_transient( 'umw-home-page-feed-' . base64_encode( $this->source ) );
 		if ( ! empty( $this->feed ) ) {
@@ -140,6 +197,11 @@ class UMW_Home_Page_Slideshow {
 	
 	/**
 	 * Process the requested feed items and turn them into slides
+	 * @uses    UMW_Home_Page_Slideshow::$slides to store an array of the individual UMW_Home_Slide objects
+	 *
+	 * @access  public
+	 * @since   0.1
+	 * @return  void
 	 */
 	function process_feed() {
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) 
@@ -147,7 +209,8 @@ class UMW_Home_Page_Slideshow {
 		$this->fetch_feed();
 		
 		if ( 'json' == $this->feed_type ) {
-			return $this->process_json_feed();
+			$this->process_json_feed();
+			return;
 		}
 		
 		if ( is_wp_error( $this->feed ) )
@@ -155,8 +218,9 @@ class UMW_Home_Page_Slideshow {
 		
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) 
 			error_log( '[UMW Home Page]: Made it past error-checking for the feed' );
-			
-		foreach( $this->feed->get_items( 0, 5 ) as $item ) {
+		
+		/** @var SimplePie_Item $item */
+		foreach( $this->feed->get_items( 0, intval( $this->atts['maxslides'] ) ) as $item ) {
 			/* Grab all of the enclosures for this item, regardless of type */
 			$enclosures = $item->get_item_tags( '', 'enclosure' );
 			
@@ -215,8 +279,16 @@ class UMW_Home_Page_Slideshow {
 		}
 	}
 	
+	/**
+	 * Process a REST API JSON feed of post objects and store them as UMW_Home_Slide objects
+	 * @uses    UMW_Home_Page_Slideshow::$slides to store the individual processed objects
+	 *
+	 * @access  public
+	 * @since   0.1
+	 * @return  void
+	 */
 	function process_json_feed() {
-		$feed = array_slice( $this->feed, 0, 5 );
+		$feed = array_slice( $this->feed, 0, intval( $this->atts['maxslides'] ) );
 		foreach( $feed as $item ) {
 			if ( empty( $item->featured_media ) ) {
 				continue;
@@ -245,97 +317,58 @@ class UMW_Home_Page_Slideshow {
 		}
 	}
 	
+	/**
+	 * Output the JavaScript attributes for the slideshow, to be used by FlexSlider
+	 * @uses    UMW_Home_Page_Slideshow::$atts
+	 *
+	 * @access  public
+	 * @since   0.1
+	 * @return  void
+	 */
 	function script_atts() {
 		echo '<!-- UMW Slider Attributes -->' . "\n" . '<script>var umw_slider_atts = ' . json_encode( $this->atts ) . ';</script>' . "\n" . '<!-- /UMW Slider Attributes -->';
 	}
 	
 	/**
 	 * Output the content of the slider
+	 * @uses       UMW_Home_Page_Slideshow::get_slider_with_thumb_nav()
+	 * @see        UMW_Home_Page_Slideshow::get_slider_with_thumb_nav()
+	 * @deprecated since 0.1
+	 *
+	 * @param   array $atts the attributes to assign to the slideshow
+	 *
+	 * @access  public
+	 * @since   0.1
+	 * @return  string the processed HTML for the slideshow
 	 */
 	function get_slider( $atts = array() ) {
 		return $this->get_slider_with_thumb_nav( $atts );
-		
-		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) 
-			error_log( '[UMW Home Page]: Entered the get_slider() method' );
-		
-		$this->atts = $this->get_defaults( $atts );
-		$defaults = $this->_defaults();
-		foreach ( $defaults as $k => $v ) {
-			if ( true === $v || false === $v ) {
-				if ( 'controlNav' == $k && 'thumbnails' == $this->atts[$k] ) {
-					continue;
-				}
-				$this->atts[$k] = in_array( $this->atts[$k], array( 'true', true, 1, '1' ), true );
-			}
-		}
-		$this->source = esc_url( $this->atts['feed'] );
-		unset( $this->atts['feed'] );
-		
-		/*wp_enqueue_style( 'umw-slider' );*/
-		wp_enqueue_style( 'flexStyles' );
-		wp_enqueue_script( 'umw-slider' );
-		/*wp_localize_script( 'umw-slider', 'umw_slider_atts', $this->atts );*/
-		add_action( 'wp_footer', array( $this, 'script_atts' ), 1 );
-		
-		if ( isset( $_GET['delete_transients'] ) )
-			delete_transient( 'umw-home-page-slider' );
-		
-		if ( false !== ( $this->show = get_transient( 'umw-home-page-slider', false ) ) )
-			return $this->show;
-		
-		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) 
-			error_log( '[UMW Home Page]: Not using an existing cache for the slider' );
-			
-		$this->process_feed();
-		
-		if ( empty( $this->slides ) && false !== ( $this->show = get_option( 'umw-home-page-slider-cache', true ) ) )
-			return $this->show;
-		
-		if ( empty( $this->slides ) ) {
-			return '';
-		}
-		
-		$shows = array( 'main' => array(), 'thumbs' => array() );
-		$i = 0;
-		foreach ( $this->slides as $slide ) {
-			$shows['main'][$i] = $this->slide( $slide );
-			$shows['thumbs'][$i] = $this->slide( $slide, true );
-			
-			$i++;
-		}
-		$rt = '
-	<div class="uhp-slider-wrap">
-		<div id="uhp-slider" class="uhp-slider flexslider">
-			<ul class="slides">';
-		$rt .= implode( '', $shows['main'] );
-		$rt .= '
-			</ul>
-		</div>';
-		$rt .= '
-		<div id="uhp-slider-nav" class="uhp-slider-nav flexslider">
-			<ul class="slides">';
-		$rt .= implode( '', $shows['thumbs'] );
-		$rt .= '
-			</ul>
-		</div>
-	</div>';
-		
-		$this->show = $rt;
-		set_transient( 'umw-home-page-slider', $rt, $this->cache_duration );
-		update_option( 'umw-home-page-slider-cache', $rt );
-		
-		return $rt;
 	}
 	
 	/**
 	 * Output the slider
+	 *
+	 * @param   array $atts the array of attributes to be applied to the slideshow
+	 *
+	 * @access  public
+	 * @since   0.1
+	 * @return  void
 	 */
 	function slider( $atts = array() ) {
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) 
 			error_log( '[UMW Home Page]: Entered the slider() method' );
-		echo $this->get_slider( $atts );
+		echo $this->get_slider_with_thumb_nav( $atts );
 	}
 	
+	/**
+	 * Process and return the HTML for an individual slide
+	 *
+	 * @param UMW_Home_Slide $slide the individual slide being processed
+	 * @param bool $thumb whether the slide has a corresponding thumbnail to be used for navigation
+	 *
+	 * @return bool|string outputs information in the error log if there is an error; otherwise, returns the
+	 *      HTML content of the slide
+	 */
 	function slide( $slide, $thumb=false ) {
 		if ( ! is_object( $slide ) )
 			return error_log( '[UMW Home Page]: For some reason, the slide in the slide() method was not an object' );
@@ -379,7 +412,13 @@ class UMW_Home_Page_Slideshow {
 	}
 	
 	/**
-	 * Output the content of the slider
+	 * Output the content of the slider (with thumbnail navigation)
+	 *
+	 * @param   array $atts the array of attributes to be applied to the slideshow
+	 *
+	 * @access  public
+	 * @since   0.1
+	 * @return  string the HTML content of the slideshow
 	 */
 	function get_slider_with_thumb_nav( $atts = array() ) {
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) 
@@ -407,7 +446,7 @@ class UMW_Home_Page_Slideshow {
 		if ( isset( $_GET['delete_transients'] ) )
 			delete_transient( 'umw-home-page-slider' );
 		
-		if ( false !== ( $this->show = get_transient( 'umw-home-page-slider', false ) ) )
+		if ( false !== ( $this->show = get_transient( 'umw-home-page-slider' ) ) )
 			return $this->show;
 		
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) 
@@ -454,6 +493,13 @@ class UMW_Home_Page_Slideshow {
 	
 	/**
 	 * Output the slider
+	 * @uses    UMW_Home_Page_Slideshow::get_slider_with_thumb_nav()
+	 *
+	 * @param   array $atts the array of attributes to be applied to the slideshow
+	 *
+	 * @access  public
+	 * @since   0.1
+	 * @return  void
 	 */
 	function slider_with_thumb_nav( $atts = array() ) {
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) 
@@ -461,6 +507,16 @@ class UMW_Home_Page_Slideshow {
 		echo $this->get_slider_with_thumb_nav( $atts );
 	}
 	
+	/**
+	 * Process and return the HTML for an individual slide when the slideshow utilizes thumbnail navigation
+	 *
+	 * @param   UMW_Home_Slide $slide the individual slide being processed
+	 *
+	 * @access  public
+	 * @since   0.1
+	 * @return  bool|string print an error in the error log if there is an error; otherwise, return the
+	 *      generated HTML for the slide itself
+	 */
 	function slide_with_thumb_nav( $slide ) {
 		if ( ! is_object( $slide ) )
 			return error_log( '[UMW Home Page]: For some reason, the slide in the slide() method was not an object' );
