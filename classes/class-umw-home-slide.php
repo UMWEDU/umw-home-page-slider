@@ -23,7 +23,7 @@ class UMW_Home_Slide {
 		if ( empty( $this->img->alt ) && ! empty( $this->caption->title ) )
 			$this->img->alt = sprintf( __( 'Read the %s story' ), apply_filters( 'the_title_attribute', $this->caption->title ) ); 
 		
-		$this->caption->text = strip_tags( apply_filters( 'the_content', $this->caption->text ) );
+		$this->caption->text = apply_filters( 'the_content', $this->caption->text );
 		
 		if ( str_word_count( $this->caption->text ) > 25 ) {
 			$tmp = explode( ' ', $this->caption->text );
