@@ -296,8 +296,8 @@ class UMW_Home_Page_Slideshow {
 			
 			$media = json_decode( wp_remote_retrieve_body( wp_safe_remote_get( $item->_links->{'wp:featuredmedia'}[0]->href ) ) );
 			$image = array( 'src' => null, 'thumb' => null, 'alt' => null );
-			if ( property_exists( $media->media_details->sizes, 'page-feature' ) ) {
-				$image['src'] = $media->media_details->sizes->{'page-feature'}->source_url;
+			if ( property_exists( $media->media_details->sizes, 'root-home-slideshow' ) ) {
+				$image['src'] = $media->media_details->sizes->{'root-home-slideshow'}->source_url;
 			} else {
 				$image['src'] = $media->source_url;
 			}
