@@ -9,24 +9,43 @@ Author URI: http://www.umw.edu/
 License: GPL2
 */
 
-if ( ! class_exists( 'UMW_Home_Slider_Widget' ) )
-	require_once( plugin_dir_path( __FILE__ ) . 'classes/class-umw-home-slider-widget.php' );
-if ( ! class_exists( 'UMW_Home_Slide' ) )
-	require_once( plugin_dir_path( __FILE__ ) . 'classes/class-umw-home-slide.php' );
-if ( ! class_exists( 'UMW_Home_Page_Slideshow' ) )
-	require_once( plugin_dir_path( __FILE__ ) . 'classes/class-umw-home-page-slideshow.php' );
+/**
+ * Set up an autoloader to automatically pull in the appropriate taxonomy class definitions
+ *
+ * @param string $class_name the full name of the class being invoked
+ *
+ * @since 2018.1
+ * @return void
+ */
+spl_autoload_register( function ( $class_name ) {
+	if ( ! stristr( $class_name, 'UMW\Home_Slider\\' ) ) {
+		return;
+	}
+
+	$filename = plugin_dir_path( __FILE__ ) . 'lib/classes/' . strtolower( str_replace( array(
+			'\\',
+			'_'
+		), array( '/', '-' ), $class_name ) ) . '.php';
+	if ( ! file_exists( $filename ) ) {
+		return;
+	}
+
+	include_once $filename;
+} );
 
 /**
- * Instantiate a UMW_Home_Page_Slideshow object
+ * Instantiate a \UMW\Home_Sliders\Slideshow object
  * @uses global $umw_home_page_slideshow_obj
  */
 function inst_umw_home_page_slideshow() {
 	global $umw_home_page_slideshow_obj;
-	if ( isset( $umw_home_page_slideshow_obj ) && is_a( $umw_home_page_slideshow_obj, 'UMW_Home_Page_Slideshow' ) )
+	if ( isset( $umw_home_page_slideshow_obj ) && is_a( $umw_home_page_slideshow_obj, 'UMW_Home_Page_Slideshow' ) ) {
 		return;
-	
-	$umw_home_page_slideshow_obj = new UMW_Home_Page_Slideshow;
+	}
+
+	$umw_home_page_slideshow_obj = new \UMW\Home_Slider\Slideshow;
 }
+
 /*add_action( 'plugins_loaded', 'inst_umw_home_page_slideshow' );*/
 
 /**
@@ -34,6 +53,7 @@ function inst_umw_home_page_slideshow() {
  * @uses register_widget()
  */
 function inst_umw_home_page_slideshow_widget() {
-	register_widget( 'UMW_Home_Slider_Widget' );
+	register_widget( '\UMW\Home_Slider\Widget' );
 }
+
 add_action( 'widgets_init', 'inst_umw_home_page_slideshow_widget' );

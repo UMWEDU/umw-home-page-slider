@@ -1,8 +1,9 @@
 <?php
+namespace UMW\Home_Slider;
 /**
  * Define the UMW_Home_Slide class
  */
-class UMW_Home_Slide {
+class Slide {
 	var $img = null;
 	var $caption = null;
 	var $link = null;

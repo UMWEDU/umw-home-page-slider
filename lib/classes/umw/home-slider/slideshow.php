@@ -1,18 +1,19 @@
 <?php
+namespace UMW\Home_Slider;
 /**
  * Define the UMW_Home_Page_Slideshow class
  */
-class UMW_Home_Page_Slideshow {
+class Slideshow {
 	/**
 	 * @var string the URL to the feed that should be retrieved and processed
 	 */
 	var $source = 'feeds.feedburner.com/umw-greatminds-home/';
 	/**
-	 * @var null|SimplePie|stdClass[] the actual content of the feed itself
+	 * @var null|\SimplePie|\stdClass[] the actual content of the feed itself
 	 */
 	var $feed = null;
 	/**
-	 * @var array|UMW_Home_Slide[] the array of slide objects after processing
+	 * @var array|\UMW\Home_Slider\Slide[] the array of slide objects after processing
 	 */
 	var $slides = array();
 	/**
@@ -117,12 +118,12 @@ class UMW_Home_Page_Slideshow {
 		$head = wp_safe_remote_head( esc_url( $this->source ) );
 		
 		if ( is_wp_error( $head ) ) {
-			$this->feed = new WP_Error( 'feed-not-found', $head->get_error_message() );
+			$this->feed = new \WP_Error( 'feed-not-found', $head->get_error_message() );
 			return false;
 		}
 		
 		if ( 200 !== wp_remote_retrieve_response_code( $head ) && 304 !== wp_remote_retrieve_response_code( $head ) ) {
-			$this->feed = new WP_Error( 'feed-not-found', __( 'The requested feed returned a status code other than 200 or 304' ) );
+			$this->feed = new \WP_Error( 'feed-not-found', __( 'The requested feed returned a status code other than 200 or 304' ) );
 			if ( defined( 'WP_DEBUG' ) && WP_DEBUG )
 				error_log( '[UMW Home Page]: The RSS feed could not be found. The response was ' . wp_remote_retrieve_response_code( $head ) );
 			return false;
@@ -143,11 +144,11 @@ class UMW_Home_Page_Slideshow {
 	 *
 	 * @access  public
 	 * @since   0.1
-	 * @return  SimplePie|WP_Error|stdClass an object containing information about the feed (or the feed items themselves)
+	 * @return  \SimplePie|\WP_Error|\stdClass an object containing information about the feed (or the feed items themselves)
 	 */
 	function fetch_feed() {
 		if ( ! $this->test_feed() )
-			return new WP_Error( 'feed-not-found', __( 'The requested feed could not be retrieved' ) );
+			return new \WP_Error( 'feed-not-found', __( 'The requested feed could not be retrieved' ) );
 		
 		if ( 'json' == $this->feed_type ) {
 			return $this->fetch_json_feed();
@@ -156,7 +157,7 @@ class UMW_Home_Page_Slideshow {
 		if ( ! class_exists( 'SimplePie' ) )
 			require_once( ABSPATH . WPINC . '/class-feed.php' );
 		
-		$this->feed = new SimplePie();
+		$this->feed = new \SimplePie();
 		$this->feed->set_feed_url( $this->source );
 		$this->feed->set_cache_class( 'WP_Feed_Cache' );
 		$this->feed->set_file_class( 'WP_SimplePie_File' );
@@ -168,7 +169,7 @@ class UMW_Home_Page_Slideshow {
 		if ( $this->feed->error() ) {
 			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) 
 				error_log( '[UMW Home Page]: There was an error processing the RSS feed. The error message was: ' . $this->feed->error() );
-			return $this->feed = new WP_Error( 'simplepie-error', $this->feed->error() );
+			return $this->feed = new \WP_Error( 'simplepie-error', $this->feed->error() );
 		}
 		
 		return $this->feed;
@@ -179,7 +180,7 @@ class UMW_Home_Page_Slideshow {
 	 *
 	 * @access  public
 	 * @since   0.1
-	 * @return  stdClass the decoded JSON of feed items as a PHP object
+	 * @return  \stdClass the decoded JSON of feed items as a PHP object
 	 */
 	function fetch_json_feed() {
 		$this->feed = get_transient( 'umw-home-page-feed-' . base64_encode( $this->source ) );
@@ -219,7 +220,7 @@ class UMW_Home_Page_Slideshow {
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) 
 			error_log( '[UMW Home Page]: Made it past error-checking for the feed' );
 		
-		/** @var SimplePie_Item $item */
+		/** @var \SimplePie_Item $item */
 		foreach( $this->feed->get_items( 0, intval( $this->atts['maxslides'] ) ) as $item ) {
 			/* Grab all of the enclosures for this item, regardless of type */
 			$enclosures = $item->get_item_tags( '', 'enclosure' );
@@ -275,7 +276,7 @@ class UMW_Home_Page_Slideshow {
 			
 			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) 
 				error_log( '[UMW Home Page]: Preparing to create a new UMW_Home_Slide object for a specific slide' );
-			$this->slides[] = new UMW_Home_Slide( $img, $caption, $link );
+			$this->slides[] = new Slide( $img, $caption, $link );
 		}
 	}
 	
@@ -313,7 +314,7 @@ class UMW_Home_Page_Slideshow {
 			
 			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) 
 				error_log( '[UMW Home Page]: Preparing to create a new UMW_Home_Slide object for a specific slide' );
-			$this->slides[] = new UMW_Home_Slide( $image, $caption, $link );
+			$this->slides[] = new Slide( $image, $caption, $link );
 		}
 	}
 	
@@ -363,7 +364,7 @@ class UMW_Home_Page_Slideshow {
 	/**
 	 * Process and return the HTML for an individual slide
 	 *
-	 * @param UMW_Home_Slide $slide the individual slide being processed
+	 * @param \UMW\Home_Slider\Slide $slide the individual slide being processed
 	 * @param bool $thumb whether the slide has a corresponding thumbnail to be used for navigation
 	 *
 	 * @return bool|string outputs information in the error log if there is an error; otherwise, returns the
@@ -510,7 +511,7 @@ class UMW_Home_Page_Slideshow {
 	/**
 	 * Process and return the HTML for an individual slide when the slideshow utilizes thumbnail navigation
 	 *
-	 * @param   UMW_Home_Slide $slide the individual slide being processed
+	 * @param   \UMW\Home_Slider\Slide $slide the individual slide being processed
 	 *
 	 * @access  public
 	 * @since   0.1

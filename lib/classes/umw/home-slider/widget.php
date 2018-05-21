@@ -1,8 +1,9 @@
 <?php
+namespace UMW\Home_Slider;
 /**
  * Define the UMW_Home_Slider_Widget class
  */
-class UMW_Home_Slider_Widget extends WP_Widget {
+class Widget extends \WP_Widget {
 	function __construct() {
 		parent::__construct( 'umw_home_slider', __( 'Home Page Slider' ), array( 'description' => __( 'The slideshow used on the UMW home page. This widget should not be used anywhere else on the website.' ) ) );
 	}
@@ -10,7 +11,7 @@ class UMW_Home_Slider_Widget extends WP_Widget {
 	function form( $instance ) {
 		global $umw_home_page_slideshow_obj;
 		if ( class_exists( 'UMW_Home_Page_Slideshow' ) && ! isset( $umw_home_page_slideshow_obj ) )
-			$umw_home_page_slideshow_obj = new UMW_Home_Page_Slideshow;
+			$umw_home_page_slideshow_obj = new Slideshow;
 		$instance = $umw_home_page_slideshow_obj->get_defaults( $instance );
 ?>
 <p><label for="<?php echo $this->get_field_id( 'feed' ) ?>"><?php _e( 'Feed URL:' ) ?></label> 
@@ -60,7 +61,7 @@ class UMW_Home_Slider_Widget extends WP_Widget {
 	function update( $new_instance, $old_instance ) {
 		global $umw_home_page_slideshow_obj;
 		if ( class_exists( 'UMW_Home_Page_Slideshow' ) && ! isset( $umw_home_page_slideshow_obj ) )
-			$umw_home_page_slideshow_obj = new UMW_Home_Page_Slideshow;
+			$umw_home_page_slideshow_obj = new Slideshow;
 		$defaults = $umw_home_page_slideshow_obj->get_defaults( $instance );
 		$bool = $instance = array();
 		foreach ( $defaults as $k => $v ) {
@@ -95,7 +96,7 @@ class UMW_Home_Slider_Widget extends WP_Widget {
 	function widget( $args, $instance ) {
 		global $umw_home_page_slideshow_obj;
 		if ( class_exists( 'UMW_Home_Page_Slideshow' ) && ! isset( $umw_home_page_slideshow_obj ) )
-			$umw_home_page_slideshow_obj = new UMW_Home_Page_Slideshow;
+			$umw_home_page_slideshow_obj = new Slideshow;
 		
 		$instance['title'] = null;
 		$title = empty( $instance['title'] ) ? null : $args['before_title'] . esc_attr( $instance['title'] ) . $args['after_title'];
