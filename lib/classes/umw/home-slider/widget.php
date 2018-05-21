@@ -50,7 +50,7 @@ class Widget extends \WP_Widget {
 	<label for="<?php echo $this->get_field_id( 'controlNavThumbs' ) ?>"><?php _e( 'Use image thumbnails as the navigation indicator for each slide?' ) ?></label></p>
 <p><input type="checkbox" name="<?php echo $this->get_field_name( 'directionNav' ) ?>" id="<?php echo $this->get_field_id( 'directionNav' ) ?>" value="1"<?php checked( $instance['directionNav'] ) ?>/> 
 	<label for="<?php echo $this->get_field_id( 'directionNav' ) ?>"><?php _e( 'Show previous/next buttons?' ) ?></label></p>
-<p><input type="checkbox" name="<?php echo $this->get_field_name( 'keyboard' ) ?>" id="<?php echo $this->get_field_id( 'keyboard' ) ?>" value="1"<?php checked( $instance['keyboard'] ) ?>/> 
+<p><input type="checkbox" name="<?php echo $this->get_field_name( 'keyboard' ) ?>" id="<?php echo $this->get_field_id( 'keyboard' ) ?>" value="1"<?php checked( $instance['keyboard'] ) ?>/>
 	<label for="<?php echo $this->get_field_id( 'keyboard' ) ?>"><?php _e( 'Allow keyboard navigation of slideshow?' ) ?></label></p>
 <p><input type="checkbox" name="<?php echo $this->get_field_name( 'mousewheel' ) ?>" id="<?php echo $this->get_field_id( 'mousewheel' ) ?>" value="1"<?php checked( $instance['mousewheel'] ) ?>/> 
 	<label for="<?php echo $this->get_field_id( 'mousewheel' ) ?>"><?php _e( 'Allow scroll-wheel navigation of slideshow?' ) ?></label></p>
@@ -60,8 +60,8 @@ class Widget extends \WP_Widget {
 	
 	function update( $new_instance, $old_instance ) {
 		global $umw_home_page_slideshow_obj;
-		if ( class_exists( 'UMW_Home_Page_Slideshow' ) && ! isset( $umw_home_page_slideshow_obj ) )
-			$umw_home_page_slideshow_obj = new Slideshow;
+		$umw_home_page_slideshow_obj = new Slideshow;
+
 		$defaults = $umw_home_page_slideshow_obj->get_defaults( $instance );
 		$bool = $instance = array();
 		foreach ( $defaults as $k => $v ) {
@@ -95,8 +95,7 @@ class Widget extends \WP_Widget {
 	
 	function widget( $args, $instance ) {
 		global $umw_home_page_slideshow_obj;
-		if ( class_exists( 'UMW_Home_Page_Slideshow' ) && ! isset( $umw_home_page_slideshow_obj ) )
-			$umw_home_page_slideshow_obj = new Slideshow;
+		$umw_home_page_slideshow_obj = new Slideshow;
 		
 		$instance['title'] = null;
 		$title = empty( $instance['title'] ) ? null : $args['before_title'] . esc_attr( $instance['title'] ) . $args['after_title'];

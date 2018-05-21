@@ -103,8 +103,8 @@ class Slideshow {
 		if ( ! wp_style_is( 'flexStyles', 'registered' ) )
 			wp_register_style( 'flexStyles', plugins_url( 'scripts/jquery.flexslider/flexslider.css', dirname( __FILE__ ) ), array(), '2.1', 'all' );
 		
-		wp_register_style( 'umw-slider', plugins_url( 'styles/umw-home-page-slider.css', dirname( __FILE__ ) ), array( 'flexStyles' ), $this->script_version, 'all' );
-		wp_register_script( 'umw-slider', plugins_url( 'scripts/umw-home-page-slider.js', dirname( __FILE__ ) ), array( 'flexslider' ), $this->script_version, true );
+		wp_register_style( 'umw-slider', plugins_url( 'styles/umw-home-page-slider.css', dirname( dirname( dirname( __FILE__ ) ) ) ), array( 'flexStyles' ), $this->script_version, 'all' );
+		wp_register_script( 'umw-slider', plugins_url( 'scripts/umw-home-page-slider.js', dirname( dirname( dirname( __FILE__ ) ) ) ), array( 'flexslider' ), $this->script_version, true );
 	}
 	
 	/**
@@ -458,6 +458,7 @@ class Slideshow {
 			return $this->show;
 		
 		$rt = '
+<section class="home-slider-container">
 	<div class="flexslider">
 		<ul class="slides">';
 		if ( empty( $this->slides ) ) {
@@ -472,7 +473,8 @@ class Slideshow {
 			</li>';
 			$rt .= '
 		</ul>
-	</div>';
+	</div>
+</section>';
 			
 			return $rt;
 		}
@@ -482,7 +484,9 @@ class Slideshow {
 		
 			$rt .= '
 		</ul>
-	</div>';
+	</div>
+	<div class="landing-flex-nav"><a href="#" class="dashicons dashicons-arrow-left-alt2 flex-prev"><span class="screen-reader-text">Previous Slide</span></a><a href="#" class="dashicons dashicons-arrow-right-alt2 flex-next"><span class="screen-reader-text">Next Slide</span></a></div>
+</section>';
 			
 			$rt = str_replace( 'greatminds/files', 'greatminds/wp-content/uploads/sites/20', $rt );
 			$this->show = $rt;
