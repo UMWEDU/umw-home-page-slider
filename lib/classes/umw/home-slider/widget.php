@@ -10,8 +10,7 @@ class Widget extends \WP_Widget {
 	
 	function form( $instance ) {
 		global $umw_home_page_slideshow_obj;
-		if ( class_exists( 'UMW_Home_Page_Slideshow' ) && ! isset( $umw_home_page_slideshow_obj ) )
-			$umw_home_page_slideshow_obj = new Slideshow;
+		$umw_home_page_slideshow_obj = new Slideshow;
 		$instance = $umw_home_page_slideshow_obj->get_defaults( $instance );
 ?>
 <p><label for="<?php echo $this->get_field_id( 'feed' ) ?>"><?php _e( 'Feed URL:' ) ?></label> 
