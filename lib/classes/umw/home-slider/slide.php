@@ -26,11 +26,11 @@ class Slide {
 		
 		$this->caption->text = apply_filters( 'the_content', $this->caption->text );
 		
-		if ( str_word_count( $this->caption->text ) > 25 ) {
+		/*if ( str_word_count( $this->caption->text ) > 25 ) {
 			$tmp = explode( ' ', $this->caption->text );
 			$tmp = implode( ' ', array_slice( $tmp, 0, 24 ) );
 			$this->caption->text = $tmp . '&hellip;';
-		}
+		}*/
 	}
 }
 
