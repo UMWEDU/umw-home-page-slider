@@ -289,6 +289,9 @@ class Slideshow {
 	 * @return  void
 	 */
 	function process_json_feed() {
+		if ( ! is_array( $this->feed ) )
+			return;
+
 		$feed = array_slice( $this->feed, 0, intval( $this->atts['maxslides'] ) );
 		foreach( $feed as $item ) {
 			if ( empty( $item->featured_media ) ) {
