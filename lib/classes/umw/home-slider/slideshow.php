@@ -99,9 +99,9 @@ class Slideshow {
 	 */
 	function enqueue_scripts() {
 		if ( ! wp_script_is( 'flexslider', 'registered' ) )
-			wp_register_script( 'flexslider', plugins_url( 'scripts/jquery.flexslider/jquery.flexslider-min.js', dirname( __FILE__ ) ), array( 'jquery' ), '2.1', true );
+			wp_register_script( 'flexslider', plugins_url( 'scripts/jquery.flexslider/jquery.flexslider-min.js', dirname( dirname( dirname( __FILE__ ) ) ) ), array( 'jquery' ), '2.1', true );
 		if ( ! wp_style_is( 'flexStyles', 'registered' ) )
-			wp_register_style( 'flexStyles', plugins_url( 'scripts/jquery.flexslider/flexslider.css', dirname( __FILE__ ) ), array(), '2.1', 'all' );
+			wp_register_style( 'flexStyles', plugins_url( 'scripts/jquery.flexslider/flexslider.css', dirname( dirname( dirname( __FILE__ ) ) ) ), array(), '2.1', 'all' );
 		
 		wp_register_style( 'umw-slider', plugins_url( 'styles/umw-home-page-slider.css', dirname( dirname( dirname( __FILE__ ) ) ) ), array( 'flexStyles' ), $this->script_version, 'all' );
 		wp_register_script( 'umw-slider', plugins_url( 'scripts/umw-home-page-slider.js', dirname( dirname( dirname( __FILE__ ) ) ) ), array( 'flexslider' ), $this->script_version, true );
