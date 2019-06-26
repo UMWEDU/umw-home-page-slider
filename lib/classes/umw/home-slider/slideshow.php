@@ -189,7 +189,7 @@ class Slideshow {
 		}
 
 		error_log( '[Home Page Slider Debug] The feed URL being retrieved is ' . print_r( $this->source, true ) );
-		$response = wp_safe_remote_get( $this->source );
+		$response = wp_safe_remote_get( urldecode( $this->source ) );
 		$this->feed = json_decode( wp_remote_retrieve_body( $response ) );
 		
 		set_transient( 'umw-home-page-feed-' . base64_encode( $this->source ), $this->feed, apply_filters( 'wp_feed_cache_transient_lifetime', $this->cache_duration, $this->source ) );
