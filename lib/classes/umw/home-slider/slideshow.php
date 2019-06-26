@@ -187,7 +187,8 @@ class Slideshow {
 		if ( ! empty( $this->feed ) ) {
 			return $this->feed;
 		}
-		
+
+		self::log( 'The feed URL being retrieved is ' . print_r( $this->source, true ) );
 		$response = wp_safe_remote_get( $this->source );
 		$this->feed = json_decode( wp_remote_retrieve_body( $response ) );
 		
