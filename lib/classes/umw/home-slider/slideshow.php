@@ -190,7 +190,6 @@ class Slideshow {
 
 		$this->source = str_replace( '&#038;', '&', $this->source );
 
-		error_log( '[Home Page Slider Debug] The feed URL being retrieved is ' . print_r( $this->source, true ) );
 		$response = wp_safe_remote_get( $this->source );
 		$this->feed = json_decode( wp_remote_retrieve_body( $response ) );
 		
