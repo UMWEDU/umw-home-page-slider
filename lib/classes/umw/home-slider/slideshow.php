@@ -312,9 +312,11 @@ class Slideshow {
 			}
 			
 			$image['alt'] = $media->alt_text;
+
+			$image = apply_filters( 'UMW/Home_Slider/Slideshow/image', $image, $item );
 			
-			$caption = array( 'title' => $item->title->rendered, 'text' => $item->excerpt->rendered );
-			$link = array( 'url' => esc_url( $item->link ) );
+			$caption = apply_filters( 'UMW/Home_Slider/Slideshow/caption', array( 'title' => $item->title->rendered, 'text' => $item->excerpt->rendered ), $item );
+			$link = apply_filters( 'UMW/Home_Slider/Slideshow/link', array( 'url' => esc_url( $item->link ) ), $item );
 			
 			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) 
 				error_log( '[UMW Home Page]: Preparing to create a new UMW_Home_Slide object for a specific slide' );
