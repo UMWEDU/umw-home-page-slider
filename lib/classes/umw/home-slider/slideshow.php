@@ -28,7 +28,7 @@ class Slideshow {
 	/**
 	 * @var string the version number to append to any script/style files
 	 */
-	var $script_version = '0.1.33';
+	var $script_version = '0.1.34';
 	/**
 	 * @var int|null the length of time for which the transients should be valid
 	 */
@@ -475,10 +475,6 @@ class Slideshow {
 		foreach ( $defaults as $k => $v ) {
 			if ( true === $v || false === $v ) {
 				if ( 'controlNav' == $k && 'thumbnails' == $this->atts[ $k ] ) {
-					continue;
-				}
-				if ( $defaults[$k] === true && ( ! array_key_exists( $k, $atts ) || empty( $atts[$k] ) ) ) {
-					$this->atts[$k] = false;
 					continue;
 				}
 				$this->atts[ $k ] = in_array( $this->atts[ $k ], array( 'true', true, 1, '1' ), true );
