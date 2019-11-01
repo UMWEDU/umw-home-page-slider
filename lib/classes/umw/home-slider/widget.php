@@ -61,8 +61,8 @@ class Widget extends \WP_Widget {
 		global $umw_home_page_slideshow_obj;
 		$umw_home_page_slideshow_obj = new Slideshow;
 
-		$defaults = $umw_home_page_slideshow_obj->get_defaults( $instance );
 		$bool = $instance = array();
+		$defaults = $umw_home_page_slideshow_obj->get_defaults( $instance );
 		foreach ( $defaults as $k => $v ) {
 			if ( array_key_exists( $k, $new_instance ) ) {
 				$instance[$k] = $new_instance[$k];
@@ -93,6 +93,8 @@ class Widget extends \WP_Widget {
 	}
 	
 	function widget( $args, $instance ) {
+	    do_action( 'UMW\Home_Slider\Widget\_doing_widget' );
+
 		global $umw_home_page_slideshow_obj;
 		$umw_home_page_slideshow_obj = new Slideshow;
 		
@@ -102,5 +104,7 @@ class Widget extends \WP_Widget {
 		echo $title;
 		$umw_home_page_slideshow_obj->slider( $instance );
 		echo $instance['after_widget'];
+
+		do_action( 'UMW\Home_Slider\Widget\_did_widget' );
 	}
 }
