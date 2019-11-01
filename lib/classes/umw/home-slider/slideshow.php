@@ -477,6 +477,10 @@ class Slideshow {
 				if ( 'controlNav' == $k && 'thumbnails' == $this->atts[ $k ] ) {
 					continue;
 				}
+				if ( $defaults[$k] === true && ( ! array_key_exists( $k, $atts ) || empty( $atts[$k] ) ) ) {
+					$this->atts[$k] = false;
+					continue;
+				}
 				$this->atts[ $k ] = in_array( $this->atts[ $k ], array( 'true', true, 1, '1' ), true );
 			}
 		}
