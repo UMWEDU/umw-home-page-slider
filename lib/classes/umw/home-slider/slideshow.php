@@ -1,4 +1,5 @@
 <?php
+
 namespace UMW\Home_Slider;
 /**
  * Define the UMW_Home_Page_Slideshow class
@@ -47,9 +48,10 @@ class Slideshow {
 		$this->cache_duration = HOUR_IN_SECONDS;
 		$this->enqueue_scripts();
 
-        if ( isset( $_GET['delete_transients'] ) ) {
-            delete_transient( 'umw-home-page-slider' );
-        }
+		if ( isset( $_GET['delete_transients'] ) ) {
+			delete_transient( 'umw-home-page-slider' );
+			delete_option( 'umw-home-page-slider-cache' );
+		}
 	}
 
 	/**
@@ -212,10 +214,10 @@ class Slideshow {
 	 * @since   0.1
 	 */
 	function fetch_json_feed() {
-	    $transient_name = 'umw-home-page-feed-' . base64_encode( $this->source );
-	    if ( isset( $_GET['delete_transients'] ) ) {
-	        delete_transient( $transient_name );
-        }
+		$transient_name = 'umw-home-page-feed-' . base64_encode( $this->source );
+		if ( isset( $_GET['delete_transients'] ) ) {
+			delete_transient( $transient_name );
+		}
 
 		$this->feed = get_transient( $transient_name );
 		if ( ! empty( $this->feed ) ) {
@@ -224,7 +226,7 @@ class Slideshow {
 
 		$this->source = str_replace( '&#038;', '&', $this->source );
 
-		$response = wp_safe_remote_get( $this->source );
+		$response   = wp_safe_remote_get( $this->source );
 		$this->feed = json_decode( wp_remote_retrieve_body( $response ) );
 
 		set_transient( $transient_name, $this->feed, apply_filters( 'wp_feed_cache_transient_lifetime', $this->cache_duration, $this->source ) );
@@ -359,8 +361,11 @@ class Slideshow {
 
 			$image = apply_filters( 'UMW/Home_Slider/Slideshow/image', $image, $item );
 
-			$caption = apply_filters( 'UMW/Home_Slider/Slideshow/caption', array( 'title' => $item->title->rendered, 'text' => $item->excerpt->rendered ), $item );
-			$link = apply_filters( 'UMW/Home_Slider/Slideshow/link', array( 'url' => esc_url( $item->link ) ), $item );
+			$caption = apply_filters( 'UMW/Home_Slider/Slideshow/caption', array(
+				'title' => $item->title->rendered,
+				'text'  => $item->excerpt->rendered
+			), $item );
+			$link    = apply_filters( 'UMW/Home_Slider/Slideshow/link', array( 'url' => esc_url( $item->link ) ), $item );
 
 			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 				error_log( '[UMW Home Page]: Preparing to create a new UMW_Home_Slide object for a specific slide' );
