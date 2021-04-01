@@ -46,6 +46,10 @@ class Slideshow {
 	function __construct() {
 		$this->cache_duration = HOUR_IN_SECONDS;
 		$this->enqueue_scripts();
+
+        if ( isset( $_GET['delete_transients'] ) ) {
+            delete_transient( 'umw-home-page-slider' );
+        }
 	}
 
 	/**
@@ -208,7 +212,12 @@ class Slideshow {
 	 * @since   0.1
 	 */
 	function fetch_json_feed() {
-		$this->feed = get_transient( 'umw-home-page-feed-' . base64_encode( $this->source ) );
+	    $transient_name = 'umw-home-page-feed-' . base64_encode( $this->source );
+	    if ( isset( $_GET['delete_transients'] ) ) {
+	        delete_transient( $transient_name );
+        }
+
+		$this->feed = get_transient( $transient_name );
 		if ( ! empty( $this->feed ) ) {
 			return $this->feed;
 		}
@@ -218,7 +227,7 @@ class Slideshow {
 		$response = wp_safe_remote_get( $this->source );
 		$this->feed = json_decode( wp_remote_retrieve_body( $response ) );
 
-		set_transient( 'umw-home-page-feed-' . base64_encode( $this->source ), $this->feed, apply_filters( 'wp_feed_cache_transient_lifetime', $this->cache_duration, $this->source ) );
+		set_transient( $transient_name, $this->feed, apply_filters( 'wp_feed_cache_transient_lifetime', $this->cache_duration, $this->source ) );
 
 		return $this->feed;
 	}
@@ -491,10 +500,6 @@ class Slideshow {
 		wp_enqueue_script( 'umw-slider' );
 		/*wp_localize_script( 'umw-slider', 'umw_slider_atts', $this->atts );*/
 		add_action( 'wp_footer', array( $this, 'script_atts' ), 1 );
-
-		if ( isset( $_GET['delete_transients'] ) ) {
-			delete_transient( 'umw-home-page-slider' );
-		}
 
 		if ( false !== ( $this->show = get_transient( 'umw-home-page-slider' ) ) ) {
 			return $this->show;
