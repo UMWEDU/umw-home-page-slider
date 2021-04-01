@@ -375,6 +375,10 @@ class Slideshow {
 			}
 			$this->slides[] = new Slide( $image, $caption, $link );
 		}
+
+		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+			error_log( '[UMW Slideshow Debug]: Slides: ' . print_r( $this->slides, true ) );
+		}
 	}
 
 	/**
