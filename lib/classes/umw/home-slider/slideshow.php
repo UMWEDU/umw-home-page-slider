@@ -250,6 +250,9 @@ class Slideshow {
 
 		if ( 'json' == $this->feed_type ) {
 			$this->process_json_feed();
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				error_log( '[UMW Slideshow Debug]: Feed content: ' . print_r( $this->feed, true ) );
+			}
 
 			return;
 		}
