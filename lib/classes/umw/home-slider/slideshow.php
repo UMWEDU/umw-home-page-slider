@@ -210,7 +210,7 @@ class Slideshow {
 	 * Retrieve a REST API JSON feed and its items
 	 *
 	 * @access  public
-	 * @return  \stdClass the decoded JSON of feed items as a PHP object
+	 * @return  array the decoded JSON of feed items as a PHP object
 	 * @since   0.1
 	 */
 	function fetch_json_feed() {
