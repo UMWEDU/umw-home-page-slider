@@ -28,7 +28,7 @@ class Slideshow {
 	/**
 	 * @var string the version number to append to any script/style files
 	 */
-	var $script_version = '0.1.45';
+	var $script_version = '0.1.46';
 	/**
 	 * @var int|null the length of time for which the transients should be valid
 	 */
