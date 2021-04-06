@@ -1,9 +1,9 @@
 {
   "name": "flexslider",
-  "version": "2.5.0",
-  "homepage": "https://github.com/woothemes/FlexSlider",
+  "version": "2.7.2",
+  "homepage": "https://github.com/woocommerce/FlexSlider",
   "authors": [
-    "WooThemes <jeff@woothemes.com>"
+    "Automattic <jeff@woothemes.com>"
   ],
   "description": "An awesome, fully responsive jQuery slider toolkit.",
   "main": [
@@ -23,7 +23,8 @@
     "node_modules",
     "bower_components",
     "test",
-    "tests"
+    "tests",
+    "demo"
   ],
   "dependencies": {
     "jquery": ">=1.11.3"
