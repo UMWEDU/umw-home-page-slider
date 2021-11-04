@@ -464,7 +464,7 @@ class Slideshow {
 			<section class="slide-caption">';
 			if ( ! empty( $slide->caption->title ) ) {
 				$rt .= '
-				<h2 class="slide-caption-title">' . ( empty( $slide->link->url ) ? '' : '<a href="' . esc_url( $slide->link->url ) . '">' ) . apply_filters( 'the_title', $slide->caption->title ) . ( empty( $slide->link->url ) ? '' : '</a>' ) . '</h2>';
+				<h2 class="slide-caption-title">' . /*( empty( $slide->link->url ) ? '' : '<a href="' . esc_url( $slide->link->url ) . '">' )*/ . apply_filters( 'the_title', $slide->caption->title ) . /*( empty( $slide->link->url ) ? '' : '</a>' )*/ . '</h2>';
 			}
 			if ( ! empty( $slide->caption->text ) ) {
 				$rt .= '
