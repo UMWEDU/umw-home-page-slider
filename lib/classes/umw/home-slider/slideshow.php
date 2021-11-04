@@ -448,16 +448,16 @@ class Slideshow {
 	<li class="slide">
 		<article class="slide-content">';
 
-		if ( ! empty( $slide->link->url ) ) {
+		/*if ( ! empty( $slide->link->url ) ) {
 			$rt .= '<a href="' . esc_url( $slide->link->url ) . '">';
-		}
+		}*/
 
 		$rt .= '
 			<img src="' . $slide->img->src . '" alt="' . $slide->img->alt . '" />';
 
-		if ( ! empty( $slide->link->url ) ) {
+		/*if ( ! empty( $slide->link->url ) ) {
 			$rt .= '</a>';
-		}
+		}*/
 
 		if ( ! empty( $slide->caption->title ) || ! empty( $slide->caption->text ) ) {
 			$rt .= '
