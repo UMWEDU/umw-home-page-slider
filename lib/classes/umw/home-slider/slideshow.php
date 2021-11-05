@@ -611,9 +611,9 @@ class Slideshow {
 	<li class="slide">
 		<article class="slide-content">';
 		}
-		if ( ! empty( $slide->link->url ) ) {
+		/*if ( ! empty( $slide->link->url ) ) {
 			$rt .= '<a href="' . esc_url( $slide->link->url ) . '">';
-		}
+		}*/
 
 		$rt .= '
 			<img src="' . str_replace( array( 'https://', 'http://' ), array(
@@ -621,16 +621,16 @@ class Slideshow {
 				'//'
 			), $slide->img->src ) . '" alt="' . strip_tags( $slide->img->alt ) . '" />';
 
-		if ( ! empty( $slide->link->url ) ) {
+		/*if ( ! empty( $slide->link->url ) ) {
 			$rt .= '</a>';
-		}
+		}*/
 
 		if ( ! empty( $slide->caption->title ) || ! empty( $slide->caption->text ) ) {
 			$rt .= '
 			<section class="slide-caption">';
 			if ( ! empty( $slide->caption->title ) ) {
 				$rt .= '
-				<h2 class="slide-caption-title">' . ( empty( $slide->link->url ) ? '' : '<a href="' . esc_url( $slide->link->url ) . '">' ) . apply_filters( 'the_title', $slide->caption->title ) . ( empty( $slide->link->url ) ? '' : '</a>' ) . '</h2>';
+				<h2 class="slide-caption-title">' /*. ( empty( $slide->link->url ) ? '' : '<a href="' . esc_url( $slide->link->url ) . '">' )*/ . apply_filters( 'the_title', $slide->caption->title ) /*. ( empty( $slide->link->url ) ? '' : '</a>' )*/ . '</h2>';
 			}
 			if ( ! empty( $slide->caption->text ) ) {
 				$rt .= '<div class="slide-caption-text">' . $slide->caption->text . '</div>';
